@@ -19,18 +19,29 @@
 
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
-    wrapperConfigurations = forAllSystems (pkgs:
-      self.lib {
+    wrapperConfigurations = forAllSystems (pkgs: {
+      test = self.lib {
         inherit pkgs;
-      });
+        modules = [./tests/test-module.nix];
+      };
+    });
 
-    packages = forAllSystems (
+    packages = forAllSystems (pkgs: {
+      test = self.lib.build {
+        inherit pkgs;
+        modules = [./tests/test-module.nix];
+      };
+    });
+
+    legacyPackages = forAllSystems (
       pkgs:
-        pkgs.nixosOptionsDoc (let
-          toplevel = self.wrapperConfigurations.${pkgs.system};
-        in {
-          inherit (toplevel) options;
-        })
+        pkgs.nixosOptionsDoc {
+          options =
+            (self.lib {
+              inherit pkgs;
+            })
+            .options;
+        }
     );
   };
 }

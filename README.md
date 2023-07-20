@@ -18,12 +18,54 @@ workflow won't break any other day.
 
 ## Example
 
-TODO: wrapper-manager outputs a build-env
+The following tests shows an overview of the available options: [./tests/test-module.nix](./tests/test-module.nix).
 
 
 ## Installation
 
-TODO
+Add wrapper-manager as a flake-input:
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "...";
+
+    wrapper-manager = {
+      url = "github:viperML/wrapper-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = {self, nixpkgs, wrapper-manager}: { ... };
+}
+```
+
+Wrapper-manager can be evaluated in any context: a NixOS configuration, a home-manager one,
+or as a package that you `nix shell` or `nix profile install`. The interface is the following:
+
+```nix
+wrapper-manager.lib.build {
+  inherit pkgs;
+  modules = [
+    ./my-module.nix
+  ];
+}
+```
+
+This produces a derivation, so feel free to use it on any place, for example:
+
+
+```nix
+users.users.my-user.packages = [
+  (wrapper-manager.lib.build {
+    inherit pkgs;
+    modules = [
+      ./my-module.nix
+    ];
+  })
+]
+```
 
 
 ## Module documentation

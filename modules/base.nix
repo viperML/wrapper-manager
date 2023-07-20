@@ -38,7 +38,7 @@
         '';
       };
 
-      wrapper = mkOption {
+      wrapped = mkOption {
         type = with types; package;
         readOnly = true;
         description = lib.mdDoc ''
@@ -50,7 +50,7 @@
     config = {
       extraWrapperFlags = lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env));
 
-      wrapper = pkgs.symlinkJoin {
+      wrapped = pkgs.symlinkJoin {
         inherit (config.basePackage) name;
         paths = [config.basePackage];
         nativeBuildInputs = [pkgs.makeWrapper];
@@ -75,10 +75,6 @@ in {
   };
 
   config = {
-    wrappers._test = {
-      env.FOO = "foo";
-      env.BAR = "bar";
-      basePackage = pkgs.hello;
-    };
+
   };
 }
