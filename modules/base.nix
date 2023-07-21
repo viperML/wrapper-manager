@@ -30,6 +30,20 @@
         };
       };
 
+      flags = mkOption {
+        type = with types; listOf (separatedString " ");
+        description = lib.mdDoc ''
+          Flags passed to the wrapped program.
+        '';
+        default = [];
+        example = lib.literalExpression ''
+          [
+            "--config ''${./config.sh}"
+            "--ascii ''${./ascii}"
+          ]
+        '';
+      };
+
       extraWrapperFlags = mkOption {
         type = with types; separatedString " ";
         description = lib.mdDoc ''
@@ -37,6 +51,7 @@
 
           See upstream documentation: [make-wrapper.sh](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh).
         '';
+        default = "";
         example = "--argv0 foo --set BAR value";
       };
 
@@ -50,14 +65,16 @@
     };
 
     config = {
-      extraWrapperFlags = lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env));
-
       wrapped = pkgs.symlinkJoin ({
           paths = [config.basePackage];
           nativeBuildInputs = [pkgs.makeWrapper];
           postBuild = ''
             for file in $out/bin/*; do
-              wrapProgram $file ${config.extraWrapperFlags}
+              wrapProgram $file ${
+              lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
+            } ${
+              lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
+            } ${config.extraWrapperFlags}
             done
           '';
         }
