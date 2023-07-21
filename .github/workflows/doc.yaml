@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'doc/**'
+      - 'modules/**'
 
 jobs:
   deploy:
