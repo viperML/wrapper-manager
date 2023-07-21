@@ -70,4 +70,4 @@ users.users.my-user.packages = [
 
 ## Module documentation
 
-TODO
+https://viperml.github.io/wrapper-manager/docs/module
