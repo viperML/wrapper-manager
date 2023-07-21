@@ -1,0 +1,22 @@
+{
+    "hugo-book": {
+        "cargoLocks": null,
+        "date": "2023-04-24",
+        "extract": null,
+        "name": "hugo-book",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "alex-shpak",
+            "repo": "hugo-book",
+            "rev": "d86d5e70c7c0d787675b13d9aee749c1a8b34776",
+            "sha256": "sha256-8TOYuBq995xCQ9JB1/uHxo0KmSI+l+xSPi8NAMw7mL4=",
+            "type": "github"
+        },
+        "version": "d86d5e70c7c0d787675b13d9aee749c1a8b34776"
+    }
+}

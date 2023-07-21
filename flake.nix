@@ -12,6 +12,12 @@
         "x86_64-linux"
         "aarch64-linux"
       ] (system: function nixpkgs.legacyPackages.${system});
+
+    doc = forAllSystems (pkgs:
+      import ./doc {
+        inherit pkgs;
+        optionsCommonMark = self.legacyPackages.${pkgs.system}.optionsCommonMark;
+      });
   in {
     lib = import ./lib.nix {
       inherit (nixpkgs) lib;
@@ -26,12 +32,19 @@
       };
     });
 
-    packages = forAllSystems (pkgs: {
-      test = self.lib.build {
-        inherit pkgs;
-        modules = [./tests/test-module.nix];
-      };
-    });
+    packages = forAllSystems (pkgs:
+      {
+        test = self.lib.build {
+          inherit pkgs;
+          modules = [./tests/test-module.nix];
+        };
+      }
+      // doc.${pkgs.system}.packages);
+
+    devShells = forAllSystems (pkgs:
+      {
+      }
+      // doc.${pkgs.system}.devShells);
 
     legacyPackages = forAllSystems (
       pkgs:
@@ -41,6 +54,23 @@
               inherit pkgs;
             })
             .options;
+          transformOptions = opt:
+            opt
+            // {
+              declarations = with pkgs.lib;
+                map
+                (decl:
+                  if hasPrefix (toString ./.) (toString decl)
+                  then let
+                    rev = self.rev or "master";
+                    subpath = removePrefix "/" (removePrefix (toString ./.) (toString decl));
+                  in {
+                    url = "https://github.com/viperML/wrapper-manager/blob/${rev}/${subpath}";
+                    name = subpath;
+                  }
+                  else decl)
+                opt.declarations;
+            };
         }
     );
   };
