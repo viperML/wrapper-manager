@@ -27,7 +27,6 @@ in {
         buildPhase = ''
           runHook preBuild
           ln -vsf ${optionsCommonMark} content/docs/module/_index.md
-          hugo --minify
           mkdir -p builddir
           hugo --minify --destination builddir
           runHook postBuild
