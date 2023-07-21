@@ -65,7 +65,8 @@
     };
 
     config = {
-      wrapped = pkgs.symlinkJoin ({
+      # FIXME: pass other outputsToInstall as-is
+      wrapped = lib.recursiveUpdate (pkgs.symlinkJoin ({
           paths = [config.basePackage];
           nativeBuildInputs = [pkgs.makeWrapper];
           postBuild = ''
@@ -84,7 +85,9 @@
           "version"
           "meta"
         ]
-        config.basePackage);
+        config.basePackage)) {
+        meta.outputsToInstall = ["out"];
+      };
     };
   };
 in {

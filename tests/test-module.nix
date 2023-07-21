@@ -7,4 +7,11 @@
       "-g Greetings"
     ];
   };
+
+  wrappers.neofetch = {
+    basePackage = pkgs.neofetch.override {x11Support = false;};
+    flags = [
+      "--ascii_distro guix"
+    ];
+  };
 }
