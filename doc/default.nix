@@ -22,7 +22,6 @@ in {
         inherit HUGO_THEMESDIR;
         nativeBuildInputs = [
           pkgs.hugo
-          pkgs.gitMinimal
         ];
 
         buildPhase = ''

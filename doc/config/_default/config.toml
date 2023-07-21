@@ -1,6 +1,6 @@
 # hugo server --minify --themesDir ... --baseURL=http://0.0.0.0:1313/theme/hugo-book/
 
-baseURL = 'https://example.com/'
+baseURL = 'https://viperml.github.io/wrapper-manager/'
 title = 'wrapper-manager'
 theme = 'hugo-book'
 
