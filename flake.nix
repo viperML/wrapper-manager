@@ -52,6 +52,11 @@
           options =
             (self.lib {
               inherit pkgs;
+              modules = [
+                {
+                  options._module.args = pkgs.lib.mkOption {internal = true;};
+                }
+              ];
             })
             .options;
           transformOptions = opt:

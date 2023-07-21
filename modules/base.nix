@@ -14,14 +14,14 @@
       basePackage = mkOption {
         type = with types; package;
         description = lib.mdDoc ''
-          Name of the base package to wrap
+          Name of the base package to wrap.
         '';
       };
 
       env = mkOption {
         type = with types; attrsOf anything;
         description = lib.mdDoc ''
-          Structured environment variables to set
+          Structured environment variables to set.
         '';
         default = {};
         example = {
@@ -32,17 +32,18 @@
       extraWrapperFlags = mkOption {
         type = with types; separatedString " ";
         description = lib.mdDoc ''
-          Raw flags passed to makeWrapper.sh
+          Raw flags passed to makeWrapper.
 
-          See upstream doc: https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh
+          See upstream documentation: [make-wrapper.sh](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh).
         '';
+        example = "--argv0 foo --set BAR value";
       };
 
       wrapped = mkOption {
         type = with types; package;
         readOnly = true;
         description = lib.mdDoc ''
-          Generated wrapper package
+          Final wrapped package.
         '';
       };
     };
