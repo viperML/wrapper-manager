@@ -16,7 +16,15 @@ in {
         type = with types; package;
         readOnly = true;
         description = lib.mdDoc ''
-          Final package composed of all the wrappers.
+          (Output) Derivation that merges all the wrappers into a single env.
+        '';
+      };
+
+      packages = mkOption {
+        type = with types; attrsOf package;
+        readOnly = true;
+        description = lib.mdDoc ''
+          (Output) Set of name=drv wrapped packages. Useful for outputting in a flake's packages.
         '';
       };
     };
@@ -26,8 +34,10 @@ in {
     build = {
       toplevel = pkgs.buildEnv {
         name = "wrapper-manager";
-        paths = builtins.attrValues (builtins.mapAttrs (_: value: value.wrapped) config.wrappers);
+        paths = builtins.attrValues config.build.packages;
       };
+
+      packages = builtins.mapAttrs (_: value: value.wrapped) config.wrappers;
     };
   };
 }
