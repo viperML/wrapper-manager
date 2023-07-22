@@ -97,7 +97,7 @@
               } ${
                 lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
               } ${
-                lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}") config.pathAdd
+                lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}/bin") config.pathAdd
               } ${config.extraWrapperFlags}
               done
 
