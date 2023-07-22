@@ -55,6 +55,15 @@
         '';
       };
 
+      pathAdd = mkOption {
+        type = with types; listOf package;
+        description = lib.mdDoc ''
+          Packages to include in the PATH of the wrappers.
+        '';
+        default = [];
+        example = lib.literalExpression "[ pkgs.starship ]";
+      };
+
       extraWrapperFlags = mkOption {
         type = with types; separatedString " ";
         description = lib.mdDoc ''
@@ -87,6 +96,8 @@
               lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
             } ${
               lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
+            } ${
+              lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}") config.pathAdd
             } ${config.extraWrapperFlags}
             done
           '';

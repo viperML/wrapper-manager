@@ -24,4 +24,9 @@
     extraPackages = [pkgs.git-extras];
     env.GIT_CONFIG_GLOBAL = pkgs.writeText "gitconfig" (lib.fileContents ./gitconfig);
   };
+
+  wrappers.nushell = {
+    basePackage = pkgs.nushell;
+    pathAdd = [pkgs.starship];
+  };
 }
