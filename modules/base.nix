@@ -14,9 +14,7 @@
       basePackage = mkOption {
         type = with types; package;
         description = lib.mdDoc ''
-          Name of the base package to wrap.
-
-          The base package is used to set the wrapper name and version.
+          Program to be wrapped.
         '';
         example = lib.literalExpression "pkgs.nix";
       };
@@ -24,7 +22,7 @@
       extraPackages = mkOption {
         type = with types; listOf package;
         description = lib.mdDoc ''
-          Extra packages to wrap and include in the output package.
+          Extra packages to also wrap.
         '';
         example = lib.literalExpression "[ pkgs.git-extras pkgs.delta ]";
         default = [];
@@ -33,7 +31,7 @@
       env = mkOption {
         type = with types; attrsOf (coercedTo anything (x: "${x}") str);
         description = lib.mdDoc ''
-          Structured environment variables to set.
+          Structured environment variables.
         '';
         default = {};
         example = {
@@ -44,7 +42,7 @@
       flags = mkOption {
         type = with types; listOf (separatedString " ");
         description = lib.mdDoc ''
-          Flags passed to the wrapped program.
+          Flags passed to all the wrapped programs.
         '';
         default = [];
         example = lib.literalExpression ''
@@ -58,7 +56,7 @@
       pathAdd = mkOption {
         type = with types; listOf package;
         description = lib.mdDoc ''
-          Packages to include in the PATH of the wrappers.
+          Packages to append to PATH.
         '';
         default = [];
         example = lib.literalExpression "[ pkgs.starship ]";
@@ -133,8 +131,7 @@ in {
       type = with types; attrsOf (submodule wrapperOpts);
       default = {};
       description = lib.mdDoc ''
-        Raw wrapper configuration. You should prefer programs.<name>,
-        or use this a low-level tweaker.
+        Wrapper configuration. See the suboptions for configuration.
       '';
     };
   };

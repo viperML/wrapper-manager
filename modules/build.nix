@@ -16,7 +16,7 @@ in {
         type = with types; package;
         readOnly = true;
         description = lib.mdDoc ''
-          (Output) Derivation that merges all the wrappers into a single env.
+          (Output) Derivation that merges all the wrappers into a single package.
         '';
       };
 
@@ -24,7 +24,7 @@ in {
         type = with types; attrsOf package;
         readOnly = true;
         description = lib.mdDoc ''
-          (Output) Set of name=drv wrapped packages. Useful for outputting in a flake's packages.
+          (Output) Attribute set of name=pkg. Useful for adding them to a flake's packages output.
         '';
       };
     };
