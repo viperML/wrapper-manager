@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   wrappers.hello = {
     env.FOO = "foo";
     env.BAR = "bar";
@@ -18,5 +22,6 @@
   wrappers.git = {
     basePackage = pkgs.git;
     extraPackages = [pkgs.git-extras];
+    env.GIT_CONFIG_GLOBAL = pkgs.writeText "gitconfig" (lib.fileContents ./gitconfig);
   };
 }
