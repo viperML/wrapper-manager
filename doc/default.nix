@@ -49,6 +49,10 @@ in {
           hugo
         ];
         inherit HUGO_THEMESDIR;
+        shellHook = ''
+          echo "Linking the module options. Please refresh the devshell if you make changes"
+          ln -vsf ${optionsCommonMark} content/docs/module/_index.md
+        '';
       };
   };
 }
