@@ -81,8 +81,7 @@
           paths = [config.basePackage] ++ config.extraPackages;
           nativeBuildInputs = [pkgs.makeWrapper];
           postBuild = ''
-            pushd $out/bin 1>/dev/null
-            for file in *; do
+            for file in $out/bin/*; do
               echo "Wrapping $file"
               wrapProgram $file ${
               lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
@@ -90,7 +89,6 @@
               lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
             } ${config.extraWrapperFlags}
             done
-            popd 1>/dev/null
           '';
         }
         // lib.getAttrs [
