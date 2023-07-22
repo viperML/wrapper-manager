@@ -44,14 +44,14 @@ exec -a "$0" "/nix/store/k57j42qv2p1msgf9djsrzssnixlblw9v-nushell-0.82.0/bin/.nu
 
 ---
 
-Wrapper-manager is a Nix library that allows you to configuring your favourite applications
+Wrapper-manager is a Nix library that allows you to configure your favorite applications
 without adding files into ~/.config.
-This is done by creating wrapper scripts that set the appropiate environment variables, like PATH;
+This is done by creating wrapper scripts that set the appropriate environment variables, like PATH;
 or pass extra flags to the wrapped program.
 
 Nix offers very good reliability and reproducibility thanks to its read-only store.
 However, putting symlinks to it in your $HOME starts breaking this property.
-As any program can tamper these symlinks, the stabilty of your sysrtem is a bit
+As any program can tamper these symlinks, the stability of your system is a bit
 more fragile.
 
 Wrapper-manager solves this problem by directly running your programs from the nix store,
