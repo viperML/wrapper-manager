@@ -15,8 +15,19 @@
         type = with types; package;
         description = lib.mdDoc ''
           Name of the base package to wrap.
+
+          The base package is used to set the wrapper name and version.
         '';
         example = lib.literalExpression "pkgs.nix";
+      };
+
+      extraPackages = mkOption {
+        type = with types; listOf package;
+        description = lib.mdDoc ''
+          Extra packages to wrap and include in the output package.
+        '';
+        example = lib.literalExpression "[ pkgs.git-extras pkgs.delta ]";
+        default = [];
       };
 
       env = mkOption {
@@ -67,7 +78,7 @@
     config = {
       # FIXME: pass other outputsToInstall as-is
       wrapped = lib.recursiveUpdate (pkgs.symlinkJoin ({
-          paths = [config.basePackage];
+          paths = [config.basePackage] ++ config.extraPackages;
           nativeBuildInputs = [pkgs.makeWrapper];
           postBuild = ''
             for file in $out/bin/*; do

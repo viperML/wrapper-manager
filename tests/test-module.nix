@@ -14,4 +14,9 @@
       "--ascii_distro guix"
     ];
   };
+
+  wrappers.git = {
+    basePackage = pkgs.git;
+    extraPackages = [pkgs.git-extras];
+  };
 }
