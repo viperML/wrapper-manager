@@ -87,28 +87,42 @@
     config = {
       # FIXME: pass other outputsToInstall as-is
       wrapped = lib.recursiveUpdate (pkgs.symlinkJoin ({
-          paths = [config.basePackage] ++ config.extraPackages;
-          nativeBuildInputs = [pkgs.makeWrapper];
-          postBuild = ''
-            for file in $out/bin/*; do
-              echo "Wrapping $file"
-              wrapProgram $file ${
-              lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
-            } ${
-              lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
-            } ${
-              lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}") config.pathAdd
-            } ${config.extraWrapperFlags}
-            done
-          '';
-        }
-        // lib.getAttrs [
-          "name"
-          "pname"
-          "version"
-          "meta"
-        ]
-        config.basePackage)) {
+            paths = [config.basePackage] ++ config.extraPackages;
+            nativeBuildInputs = [pkgs.makeWrapper];
+            postBuild = ''
+              for file in $out/bin/*; do
+                echo "Wrapping $file"
+                wrapProgram $file ${
+                lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
+              } ${
+                lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
+              } ${
+                lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}") config.pathAdd
+              } ${config.extraWrapperFlags}
+              done
+
+              cd $out/bin
+              for exe in *; do
+                for file in $out/share/applications/*; do
+                  echo "Fixing $file"
+                  sed -i "s:/nix/store/.*/bin/$exe :$out/bin/$exe :" "$file"
+                done
+              done
+            '';
+          }
+          // lib.getAttrs [
+            "name"
+            # "pname"
+            # "version"
+            "meta"
+          ]
+          config.basePackage)
+        // (lib.optionalAttrs (lib.hasAttr "pname" config.basePackage) {
+          inherit (config.basePackage) pname;
+        })
+        // (lib.optionalAttrs (lib.hasAttr "version" config.basePackage) {
+          inherit (config.basePackage) version;
+        })) {
         meta.outputsToInstall = ["out"];
       };
     };
