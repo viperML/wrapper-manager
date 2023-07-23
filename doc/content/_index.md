@@ -22,7 +22,7 @@
 }
 ```
 
-Result:
+Result (nushell executable):
 
 ```bash
 #! /nix/store/51sszqz1d9kpx480scb1vllc00kxlx79-bash-5.2-p15/bin/bash -e
@@ -46,19 +46,20 @@ exec -a "$0" "/nix/store/k57j42qv2p1msgf9djsrzssnixlblw9v-nushell-0.82.0/bin/.nu
 
 Wrapper-manager is a Nix library that allows you to configure your favorite applications
 without adding files into ~/.config.
-This is done by creating wrapper scripts that set the appropriate environment variables, like PATH;
+This is done by creating wrapper scripts that set the appropriate environment variables, like PATH,
 or pass extra flags to the wrapped program.
 
 Nix offers very good reliability and reproducibility thanks to its read-only store.
 However, putting symlinks to it in your $HOME starts breaking this property.
-As any program can tamper these symlinks, the stability of your system is a bit
+Because any program can tamper files in ~, the stability of your system is a bit
 more fragile.
 
-Wrapper-manager solves this problem by directly running your programs from the nix store,
-without intermediaries.
+Wrapper-manager leverages the nixpkgs' functions `wrapProgram` and `symlinkJoin` to create wrappers
+around your applications, providing an easy-to use interface, and also getting
+around some of their shortcomings.
 
 
-## **Documentation**
+## **Module documentation**
 
 https://viperml.github.io/wrapper-manager/docs/module
 
@@ -66,7 +67,7 @@ https://viperml.github.io/wrapper-manager/docs/module
 
 ## **Installation**
 
-Add wrapper-manager as a flake-input:
+First, bring wrapper-manager as a flake input:
 
 ```nix
 # flake.nix
@@ -84,18 +85,21 @@ Add wrapper-manager as a flake-input:
 }
 ```
 
-Wrapper-manager can be evaluated in any context: a NixOS configuration, home-manager, flake's package outputs flake's package outputs etc.
-The interface is the following:
+Evaluate a wrapper-manager configuration with the following interface:
+
 
 ```nix
 wrapper-manager.lib.build {
   inherit pkgs;
+
   modules = [
     ./my-module.nix
+
     # or embed the module directly
     {
       wrappers.foo = {
         env.BAR = "bar";
+        flags = [ "--baz" ];
       };
     }
   ];
@@ -104,7 +108,9 @@ wrapper-manager.lib.build {
 
 ### Standalone application
 
-Wrapper-manager can be evaluated in any context that accepts a package, for example:
+Wrapper-manager can be evaluated in any context that accepts a package, like in
+`environment.systemPackages`, `users.users.my-user.packages`, `home.packages`, etc.
+
 
 ```nix
 # configuration.nix
