@@ -12,6 +12,8 @@ enableGitInfo = false
 [markup]
 [markup.goldmark.renderer]
   unsafe = true
+[markup.highlight]
+style = "github-dark"
 
 [markup.tableOfContents]
   startLevel = 1
@@ -46,7 +48,7 @@ enableGitInfo = false
 
   # (Optional, default none) Set the path to a logo for the book. If the logo is
   # /static/logo.png then the path would be logo.png
-  # BookLogo = 'logo.png'
+  BookLogo = "wrapper.svg"
 
   # (Optional, default none) Set leaf bundle to render as side menu
   # When not specified file structure and weights will be used
@@ -59,7 +61,7 @@ enableGitInfo = false
 
   # Set source repository location.
   # Used for 'Last Modified' and 'Edit this page' links.
-  BookRepo = 'https://github.com/alex-shpak/hugo-book'
+  BookRepo = 'https://github.com/viperML/wrapper-manager'
 
   # (Optional, default 'commit') Specifies commit portion of the link to the page's last modified
   # commit hash for 'doc' page type.
@@ -71,7 +73,7 @@ enableGitInfo = false
   # Enable "Edit this page" links for 'doc' page type.
   # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
   # Edit path must point to root directory of repo.
-  BookEditPath = 'edit/main/exampleSite'
+  BookEditPath = 'edit/master/doc'
 
   # Configure the date format used on the pages
   # - In git information
