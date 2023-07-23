@@ -1,6 +1,16 @@
-# **wrapper-manager**
+####
 
-### *Post-modern configuration management*
+<h1>
+    <p align="center">
+        <b>wrapper-manager</b>
+    </p>
+</h1>
+
+<h3>
+    <p align="center">
+        <i>Post-modern configuration management</i>
+    </p>
+</h3>
 
 <p align="center" style="margin: 2em auto;">
   <img src="./doc/static/wrapper.svg" alt="wrapped nixos logo" width="350"/>
