@@ -25,19 +25,17 @@
 
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
-    wrapperConfigurations = forAllSystems (pkgs: {
-      test = self.lib {
+    checks = forAllSystems (pkgs:
+      (self.lib {
         inherit pkgs;
         modules = [./tests/test-module.nix];
-      };
-    });
+      })
+      .config
+      .build
+      .packages);
 
     packages = forAllSystems (pkgs:
       {
-        test = self.lib.build {
-          inherit pkgs;
-          modules = [./tests/test-module.nix];
-        };
       }
       // doc.${pkgs.system}.packages);
 
