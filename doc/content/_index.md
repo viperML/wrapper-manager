@@ -100,26 +100,19 @@ First, bring wrapper-manager as a flake input:
 }
 ```
 
-Evaluate a wrapper-manager configuration with the following interface:
-
+The `lib` output is a function that evaluates the module:
 
 ```nix
-wrapper-manager.lib.build {
+wrapper-manager.lib {
   inherit pkgs;
-
   modules = [
     ./my-module.nix
-
-    # or embed the module directly
-    {
-      wrappers.foo = {
-        env.BAR = "bar";
-        flags = [ "--baz" ];
-      };
-    }
   ];
 }
 ```
+
+As a shorthand for `(wrapper-manager.lib { ... }).config.build.toplevel`, you can use `wrapper-manager.lib.build` instead.
+
 
 ### Standalone application
 
@@ -143,13 +136,17 @@ Wrapper-manager can be evaluated in any context that accepts a package, like in
 }
 ```
 
-### NixOS module
-
-*TODO*
-
 
 ## **Configuration examples**
 
 These are some examples of wrapper-manager used in the wild. Feel free to PR yours.
 
 - https://github.com/viperML/dotfiles/tree/master/wrappers
+
+
+## To-do's
+
+- [ ] NixOS module
+- [ ] Home-manager module
+- [ ] Add nix wrapppers a la `programs.foo` (?)
+- [ ] Add a custom namespaces wrapper as a variant to the symlinkJoin/wrapProgram wrapper
