@@ -146,7 +146,4 @@ These are some examples of wrapper-manager used in the wild. Feel free to PR you
 
 ## To-do's
 
-- [ ] NixOS module
-- [ ] Home-manager module
-- [ ] Add nix wrapppers a la `programs.foo` (?)
-- [ ] Add a custom namespaces wrapper as a variant to the symlinkJoin/wrapProgram wrapper
+https://github.com/viperML/wrapper-manager/issues
