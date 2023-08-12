@@ -17,6 +17,9 @@
     flags = [
       "--ascii_distro guix"
     ];
+    renames = {
+      "neofetch" = "neofetch2";
+    };
   };
 
   wrappers.git = {
@@ -28,5 +31,19 @@
   wrappers.nushell = {
     basePackage = pkgs.nushell;
     pathAdd = [pkgs.starship];
+  };
+
+  wrappers.wezterm = {
+    basePackage = pkgs.wezterm;
+    renames = {
+      "wezterm" = "wezterm2";
+    };
+  };
+
+  wrappers.chrome = {
+    basePackage = pkgs.google-chrome;
+    renames = {
+      "google-chrome-stable" = "google-chrome-stable2";
+    };
   };
 }

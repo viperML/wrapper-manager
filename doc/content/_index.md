@@ -147,3 +147,8 @@ These are some examples of wrapper-manager used in the wild. Feel free to PR you
 ## To-do's
 
 https://github.com/viperML/wrapper-manager/issues
+
+## Changelog
+
+- 2023-08-12
+  - Added wrappers.name.renames option.

@@ -11,7 +11,14 @@
       nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "aarch64-linux"
-      ] (system: function nixpkgs.legacyPackages.${system});
+      ] (system:
+        function
+        # Import nixpkgs to try google-chrome wrapper
+        # this pkgs is not used by the consumer, only .lib
+        (import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        }));
 
     doc = forAllSystems (pkgs:
       import ./doc {

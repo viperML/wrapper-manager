@@ -80,6 +80,18 @@
           (Output) Final wrapped package.
         '';
       };
+
+      renames = mkOption {
+        type = with types; attrsOf str;
+        description = lib.mdDoc ''
+          Map of renames FROM = TO. Renames every binary /bin/FROM to /bin/TO, adjusting other
+          necessary files.
+        '';
+        default = {};
+        example = {
+          "nvim" = "custom-nvim";
+        };
+      };
     };
 
     config = {
@@ -102,9 +114,26 @@
 
                 cd $out/bin
                 for exe in *; do
+
+                  if false; then
+                    exit 2
+                  ${lib.concatStringsSep "\n" (builtins.attrValues (lib.mapAttrs (name: value: ''
+                    elif [[ $exe == ${name} ]]; then
+                      newexe=${value}
+                      mv -vf $exe $newexe
+                  '')
+                  config.renames))}
+                  else
+                    newexe=$exe
+                  fi
+
+                  # Fix .desktop files
+                  # This list of fixes might not be exhaustive
                   for file in $out/share/applications/*; do
                     echo "Fixing $file"
-                    sed -i "s:/nix/store/.*/bin/$exe :$out/bin/$exe :" "$file"
+                    sed -i "s#/nix/store/.*/bin/$exe #$out/bin/$newexe #" "$file"
+                    sed -i -E "s#Exec=$exe([[:space:]])#Exec=$out/bin/$newexe\1#g" "$file"
+                    sed -i -E "s#TryExec=$exe([[:space:]]*)#TryExec=$out/bin/$newexe\1#g" "$file"
                   done
                 done
 
