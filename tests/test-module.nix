@@ -4,8 +4,8 @@
   ...
 }: {
   wrappers.hello = {
-    env.FOO = "foo";
-    env.BAR = "bar";
+    env.FOO.value = "foo";
+    env.BAR.value = "bar";
     basePackage = pkgs.hello;
     flags = [
       "-g Greetings"
