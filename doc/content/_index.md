@@ -150,7 +150,7 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
-- TBA
+- 2023-10-05
   - Changed wrapper.name.env to be an attrset instead
   - Added the ability to unset a variable with wrapper.name.env.unset
   - Added the ability to disallow overriding a variable with wrapper.name.env.force
