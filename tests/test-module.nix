@@ -25,7 +25,7 @@
   wrappers.git = {
     basePackage = pkgs.git;
     extraPackages = [pkgs.git-extras];
-    env.GIT_CONFIG_GLOBAL = pkgs.writeText "gitconfig" (lib.fileContents ./gitconfig);
+    env.GIT_CONFIG_GLOBAL.value = pkgs.writeText "gitconfig" (lib.fileContents ./gitconfig);
   };
 
   wrappers.nushell = {

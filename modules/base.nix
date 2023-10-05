@@ -29,26 +29,48 @@
       };
 
       env = mkOption {
-        type = with types; attrsOf (coercedTo anything (x: "${x}") str);
+        # This is a hack to display a helpful error message to the user about the changed api.
+        # Should be changed to just `attrsOf submodule` at some point.
+        type = let
+          inherit (lib) any isStringLike zipListsWith findFirst showOption;
+          actualType = types.submodule ./env-type.nix;
+          forgedType =
+            actualType
+            // {
+              # There's special handling if this value is present which makes merging treat this type as any other submodule type,
+              # so we lie about there being no sub-modules so that our `check` and `merge` get called.
+              getSubModules = null;
+              check = v: isStringLike v || actualType.check v;
+              merge = loc: defs:
+                if any (def: isStringLike def.value) defs
+                then
+                  throw ''
+                    ${showOption loc} has been changed to an attribute set.
+                    Instead of assigning value directly, use ${showOption (loc ++ ["value"])} = <value>;
+                  ''
+                else (actualType.merge loc defs);
+            };
+        in
+          types.attrsOf forgedType;
         description = lib.mdDoc ''
           Structured environment variables.
         '';
         default = {};
         example = {
-          NIX_CONFIG = "allow-import-from-derivation = false";
+          NIX_CONFIG.value = "allow-import-from-derivation = false";
         };
       };
 
       flags = mkOption {
-        type = with types; listOf (separatedString " ");
+        type = with types; listOf (coercedTo anything (x: "${x}") str);
         description = lib.mdDoc ''
           Flags passed to all the wrapped programs.
         '';
         default = [];
         example = lib.literalExpression ''
           [
-            "--config ''${./config.sh}"
-            "--ascii ''${./ascii}"
+            "--config" ./config.sh
+            "--ascii" ./ascii
           ]
         '';
       };
@@ -96,20 +118,43 @@
 
     config = {
       wrapped = let
+        envToWrapperArg = name: config: let
+          optionStr = attr: lib.showOption ["env" name attr];
+          unsetArg =
+            if !config.force
+            then
+              (lib.warn ''
+                ${optionStr "value"} is null (indicating unsetting the variable), but ${optionStr "force"} is false. This option will have no effect
+              '' [])
+            else ["--unset" config.name];
+          setArg = let
+            arg =
+              if config.force
+              then "--set"
+              else "--set-default";
+          in [arg config.name config.value];
+        in
+          if config.value == null
+          then unsetArg
+          else setArg;
         result =
           pkgs.symlinkJoin ({
               paths = [config.basePackage] ++ config.extraPackages;
               nativeBuildInputs = [pkgs.makeWrapper];
-              postBuild = ''
+              postBuild = let
+                envArgs = lib.mapAttrsToList envToWrapperArg config.env;
+                # Yes, the arguments are escaped later, yes, this is intended to "double escape",
+                # so that they are escaped for wrapProgram and for the final binary too.
+                flagArgs = map (args: ["--add-flags" (lib.escapeShellArg args)]) config.flags;
+                pathArgs = map (p: ["--prefix" "PATH" ":" "${p}/bin"]) config.pathAdd;
+                allArgs = lib.flatten (envArgs ++ flagArgs ++ pathArgs);
+              in ''
                 for file in $out/bin/*; do
                   echo "Wrapping $file"
-                  wrapProgram $file ${
-                  lib.concatStringsSep " " (builtins.attrValues (builtins.mapAttrs (name: value: "--set-default ${name} ${value}") config.env))
-                } ${
-                  lib.concatMapStringsSep " " (args: "--add-flags \"${args}\"") config.flags
-                } ${
-                  lib.concatMapStringsSep " " (p: "--prefix PATH : ${p}/bin") config.pathAdd
-                } ${config.extraWrapperFlags}
+                  wrapProgram \
+                    $file \
+                    ${lib.escapeShellArgs allArgs} \
+                    ${config.extraWrapperFlags}
                 done
 
                 cd $out/bin
@@ -117,12 +162,12 @@
 
                   if false; then
                     exit 2
-                  ${lib.concatStringsSep "\n" (builtins.attrValues (lib.mapAttrs (name: value: ''
-                    elif [[ $exe == ${name} ]]; then
-                      newexe=${value}
+                  ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: ''
+                    elif [[ $exe == ${lib.escapeShellArg name} ]]; then
+                      newexe=${lib.escapeShellArg value}
                       mv -vf $exe $newexe
                   '')
-                  config.renames))}
+                  config.renames)}
                   else
                     newexe=$exe
                   fi

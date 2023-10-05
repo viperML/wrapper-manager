@@ -25,10 +25,10 @@
   wrappers.nushell = {
     basePackage = pkgs.nushell;
     flags = [
-      "--env-config ${./env.nu}"
-      "--config ${./config.nu}"
+      "--env-config" ./env.nu
+      "--config" ./config.nu
     ];
-    env.STARSHIP_CONFIG = ../starship.toml;
+    env.STARSHIP_CONFIG.value = ../starship.toml;
     pathAdd = [
       pkgs.starship
       pkgs.carapace
@@ -149,6 +149,12 @@ These are some examples of wrapper-manager used in the wild. Feel free to PR you
 https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
+
+- TBA
+  - Changed wrapper.name.env to be an attrset instead
+  - Added the ability to unset a variable with wrapper.name.env.unset
+  - Added the ability to disallow overriding a variable with wrapper.name.env.force
+  - Changed the way wrapper.name.flags is handled so that every flag is escaped
 
 - 2023-08-12
   - Added wrappers.name.renames option.
