@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  some-special-arg,
   ...
 }: {
   wrappers.hello = {
@@ -8,14 +9,16 @@
     env.BAR.value = "bar";
     basePackage = pkgs.hello;
     flags = [
-      "-g Greetings"
+      "-g"
+      some-special-arg
     ];
   };
 
   wrappers.neofetch = {
     basePackage = pkgs.neofetch.override {x11Support = false;};
     flags = [
-      "--ascii_distro guix"
+      "--ascii_distro"
+      "guix"
     ];
     renames = {
       "neofetch" = "neofetch2";

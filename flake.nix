@@ -36,6 +36,9 @@
       (self.lib {
         inherit pkgs;
         modules = [./tests/test-module.nix];
+        specialArgs = {
+          some-special-arg = "foo";
+        };
       })
       .config
       .build

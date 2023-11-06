@@ -2,17 +2,15 @@
   eval = {
     pkgs,
     modules ? [],
+    specialArgs ? {},
   }:
     lib.evalModules {
       modules =
         [
           ./modules
-          {
-            _module.args.pkgs = pkgs;
-          }
         ]
         ++ modules;
-      specialArgs = {};
+      specialArgs = {inherit pkgs;} // specialArgs;
     };
 in {
   __functor = _: eval;

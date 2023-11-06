@@ -150,6 +150,9 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- 2023-11-06
+  - Users can now pass their own `specialArgs`
+
 - 2023-10-05
   - Changed wrapper.name.env to be an attrset instead
   - Added the ability to unset a variable with wrapper.name.env.unset
