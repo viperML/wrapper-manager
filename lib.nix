@@ -1,8 +1,7 @@
 {lib}: let
   eval = {
-    pkgs,
     modules ? [],
-    specialArgs ? {},
+    moduleArgs ? {},
   }:
     lib.evalModules {
       modules =
@@ -10,7 +9,7 @@
           ./modules
         ]
         ++ modules;
-      specialArgs = {inherit pkgs;} // specialArgs;
+      specialArgs = moduleArgs;
     };
 in {
   __functor = _: eval;

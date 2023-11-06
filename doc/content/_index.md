@@ -100,11 +100,11 @@ First, bring wrapper-manager as a flake input:
 }
 ```
 
-The `lib` output is a function that evaluates the module:
+The `lib` output is a function that evaluates the module with an optional set of module arguments:
 
 ```nix
 wrapper-manager.lib {
-  inherit pkgs;
+  moduleArgs = { inherit pkgs config; };
   modules = [
     ./my-module.nix
   ];
@@ -126,7 +126,7 @@ Wrapper-manager can be evaluated in any context that accepts a package, like in
   users.users.my-user.packages = [
 
     (wrapper-manager.lib.build {
-      inherit pkgs;
+      moduleArgs = { inherit pkgs; };
       modules = [
         ./my-module.nix
       ];
@@ -149,6 +149,10 @@ These are some examples of wrapper-manager used in the wild. Feel free to PR you
 https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
+
+- 2023-11-06
+  - Add `moduleArgs` attribute to lib
+  - Remove explicit `pkgs` argument (users may pass `pkgs` into `moduleArgs`)
 
 - 2023-11-06
   - Users can now pass their own `specialArgs`
