@@ -34,11 +34,11 @@
 
     checks = forAllSystems (pkgs:
       (self.lib {
-        inherit pkgs;
-        modules = [./tests/test-module.nix];
-        specialArgs = {
+        moduleArgs = {
+          inherit pkgs;
           some-special-arg = "foo";
         };
+        modules = [./tests/test-module.nix];
       })
       .config
       .build
