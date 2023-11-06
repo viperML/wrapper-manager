@@ -41,15 +41,9 @@
       .build
       .packages);
 
-    packages = forAllSystems (pkgs:
-      {
-      }
-      // doc.${pkgs.system}.packages);
+    packages = forAllSystems (pkgs: doc.${pkgs.system}.packages);
 
-    devShells = forAllSystems (pkgs:
-      {
-      }
-      // doc.${pkgs.system}.devShells);
+    devShells = forAllSystems (pkgs: doc.${pkgs.system}.devShells);
 
     legacyPackages = forAllSystems (
       pkgs:
