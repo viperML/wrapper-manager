@@ -104,7 +104,10 @@ The `lib` output is a function that evaluates the module with an optional set of
 
 ```nix
 wrapper-manager.lib {
-  moduleArgs = { inherit pkgs config; };
+  moduleArgs = {
+    inherit pkgs;
+    nixosCfg = config;
+  };
   modules = [
     ./my-module.nix
   ];
