@@ -15,7 +15,9 @@
       specialArgs = {};
     };
 in {
-  __functor = _: eval;
-
-  build = args: (eval args).config.build.toplevel;
+  lib = {
+    inherit eval;
+    __functor = _: eval;
+    build = args: (eval args).config.build.toplevel;
+  };
 }

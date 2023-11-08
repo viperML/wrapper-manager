@@ -25,8 +25,10 @@
   wrappers.nushell = {
     basePackage = pkgs.nushell;
     flags = [
-      "--env-config" ./env.nu
-      "--config" ./config.nu
+      "--env-config"
+      ./env.nu
+      "--config"
+      ./config.nu
     ];
     env.STARSHIP_CONFIG.value = ../starship.toml;
     pathAdd = [
@@ -80,9 +82,11 @@ https://viperml.github.io/wrapper-manager/docs/module
 
 
 
-## **Installation**
+## **Installation/usage**
 
-First, bring wrapper-manager as a flake input:
+First, you need to instantiate wrapper-manager's lib. This can be done by pulling the WM flake, or by pulling the repo tarball directly.
+
+### Flake
 
 ```nix
 # flake.nix
@@ -90,8 +94,10 @@ First, bring wrapper-manager as a flake input:
   inputs = {
     nixpkgs.url = "...";
 
+    # Add the wrapper-manager flake
     wrapper-manager = {
       url = "github:viperML/wrapper-manager";
+      # WM's nixpkgs is only used for tests, you can safely drop this if needed.
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -100,36 +106,74 @@ First, bring wrapper-manager as a flake input:
 }
 ```
 
-The `lib` output is a function that evaluates the module:
+### Classic
+
+Wrapper-manager can be pulled in a classic (non-flake) setup for a devshell or nixos configuration, like so:
 
 ```nix
-wrapper-manager.lib {
+# shell.nix , or configuration.nix
+
+# or {pkgs, config, ...}: if you are in NixOS...
+let
+  pkgs = import <nixpkgs> {};
+
+  # optionally, pin a commit instead of using master
+  wrapper-manager = import (builtins.fetchTarball "https://github.com/viperML/wrapper-manager/archive/refs/heads/master.tar.gz") {
+    inherit (pkgs) lib;
+  };
+in
+  ...
+```
+
+### Evaluating
+
+Now that you already have `wrapper-manager` in scope, you need to evaluate `wrapper-manager.lib`. The argument is an attrset with following elements:
+
+- `pkgs`: your nixpkgs instance used to bring `symlinkJoin` and `makeWrapper`, as well as passing it through the modules for convenience.
+- `modules`: a list of wrapper-manager modules. As with NixOS, a module can be passed as a path to a module or directly. A proper module is either an attset, or a function to attrset.
+- `specialArgs`: extra arguments passed to the module system.
+
+A convenience shorthand for `(wrapper-manager.lib {...}).config.build.toplevel` is available through: `wrapper-manager.lib.build {}`, which is probably what you want in 99% of the cases.
+
+```nix
+# This expression outputs a package, which collects all wrappers.
+# You can add it to:
+# - environment.systemPackages
+# - home.packages
+# - mkShell { packages = [...]}
+# - etc
+
+(wrapper-manager.lib.build {
   inherit pkgs;
   modules = [
     ./my-module.nix
+    {
+      wrappers.foo = { ... };
+    }
   ];
-}
+})
+# => «derivation /nix/store/...»
 ```
 
-As a shorthand for `(wrapper-manager.lib { ... }).config.build.toplevel`, you can use `wrapper-manager.lib.build` instead.
-
-
-### Standalone application
-
-Wrapper-manager can be evaluated in any context that accepts a package, like in
-`environment.systemPackages`, `users.users.my-user.packages`, `home.packages`, etc.
-
-
+For example, if you want to use wrapper-manager in the context of a devshell, you can instatiate it directly like so:
 ```nix
-# configuration.nix
-{config, pkgs, ...}: {
-  users.users.my-user.packages = [
+# pkgs and wrapper-manager in scope, see previous steps
+# ...
+mkShell {
+  packages = [
 
     (wrapper-manager.lib.build {
       inherit pkgs;
-      modules = [
-        ./my-module.nix
-      ];
+      modules = [{
+        wrappers.stack = {
+          basePackage = pkgs.stack;
+          flags = [
+            "--resolver"
+            "lts"
+          ];
+          env.NO_COLOR.value = "1";
+        };
+      }];
     })
 
   ];
