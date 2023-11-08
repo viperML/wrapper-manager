@@ -25,60 +25,62 @@
         inherit pkgs;
         optionsCommonMark = self.legacyPackages.${pkgs.system}.optionsCommonMark;
       });
-  in {
-    lib = import ./lib.nix {
-      inherit (nixpkgs) lib;
-    };
+  in
+    (
+      import ./default.nix {
+        inherit (nixpkgs) lib;
+      }
+    )
+    // {
+      formatter = forAllSystems (pkgs: pkgs.alejandra);
 
-    formatter = forAllSystems (pkgs: pkgs.alejandra);
+      checks = forAllSystems (pkgs:
+        (self.lib {
+          inherit pkgs;
+          modules = [./tests/test-module.nix];
+          specialArgs = {
+            some-special-arg = "foo";
+          };
+        })
+        .config
+        .build
+        .packages);
 
-    checks = forAllSystems (pkgs:
-      (self.lib {
-        inherit pkgs;
-        modules = [./tests/test-module.nix];
-        specialArgs = {
-          some-special-arg = "foo";
-        };
-      })
-      .config
-      .build
-      .packages);
+      packages = forAllSystems (pkgs: doc.${pkgs.system}.packages);
 
-    packages = forAllSystems (pkgs: doc.${pkgs.system}.packages);
+      devShells = forAllSystems (pkgs: doc.${pkgs.system}.devShells);
 
-    devShells = forAllSystems (pkgs: doc.${pkgs.system}.devShells);
-
-    legacyPackages = forAllSystems (
-      pkgs:
-        pkgs.nixosOptionsDoc {
-          options =
-            (self.lib {
-              inherit pkgs;
-              modules = [
-                {
-                  options._module.args = pkgs.lib.mkOption {internal = true;};
-                }
-              ];
-            })
-            .options;
-          transformOptions = opt:
-            opt
-            // {
-              declarations = with pkgs.lib;
-                map
-                (decl:
-                  if hasPrefix (toString ./.) (toString decl)
-                  then let
-                    rev = self.rev or "master";
-                    subpath = removePrefix "/" (removePrefix (toString ./.) (toString decl));
-                  in {
-                    url = "https://github.com/viperML/wrapper-manager/blob/${rev}/${subpath}";
-                    name = subpath;
+      legacyPackages = forAllSystems (
+        pkgs:
+          pkgs.nixosOptionsDoc {
+            options =
+              (self.lib {
+                inherit pkgs;
+                modules = [
+                  {
+                    options._module.args = pkgs.lib.mkOption {internal = true;};
                   }
-                  else decl)
-                opt.declarations;
-            };
-        }
-    );
-  };
+                ];
+              })
+              .options;
+            transformOptions = opt:
+              opt
+              // {
+                declarations = with pkgs.lib;
+                  map
+                  (decl:
+                    if hasPrefix (toString ./.) (toString decl)
+                    then let
+                      rev = self.rev or "master";
+                      subpath = removePrefix "/" (removePrefix (toString ./.) (toString decl));
+                    in {
+                      url = "https://github.com/viperML/wrapper-manager/blob/${rev}/${subpath}";
+                      name = subpath;
+                    }
+                    else decl)
+                  opt.declarations;
+              };
+          }
+      );
+    };
 }
