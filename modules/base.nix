@@ -107,7 +107,7 @@
         description = lib.mdDoc ''
           Raw flags passed to makeWrapper.
 
-          See upstream documentation for [make-wrapper.sh](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh).
+          See upstream documentation for make-wrapper.sh : https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh
         '';
         default = "";
         example = "--argv0 foo --set BAR value";
