@@ -68,7 +68,7 @@
       prependFlags = mkOption {
         type = with types; listOf (coercedTo anything (x: "${x}") str);
         description = lib.mdDoc ''
-          Prepend a flag to the invocation of the program, t**before** any arguments passed to the wrapped executable.
+          Prepend a flag to the invocation of the program, **before** any arguments passed to the wrapped executable.
         '';
         default = [];
         example = lib.literalExpression ''
