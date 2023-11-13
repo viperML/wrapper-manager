@@ -25,8 +25,10 @@
   wrappers.nushell = {
     basePackage = pkgs.nushell;
     flags = [
-      "--env-config" ./env.nu
-      "--config" ./config.nu
+      "--env-config"
+      ./env.nu
+      "--config"
+      ./config.nu
     ];
     env.STARSHIP_CONFIG.value = ../starship.toml;
     pathAdd = [
