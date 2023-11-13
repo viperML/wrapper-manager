@@ -43,10 +43,10 @@
     };
   };
 
-  wrappers.chrome = {
-    basePackage = pkgs.google-chrome;
+  wrappers.neovim = {
+    basePackage = pkgs.neovim;
     renames = {
-      "google-chrome-stable" = "google-chrome-stable2";
+      "nvim" = "nvim2";
     };
   };
 }

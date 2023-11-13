@@ -191,6 +191,11 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- 2023-11-13
+  - Added `prependFlags`, which maps to `--add-flags`
+  - Added `appendFlags`, which maps to `--append-flags`
+  - `flags` is now an alias to `prependFlags`, which uses `--add-flags` instead of `--append-flags`
+
 - 2023-11-06
   - Users can now pass their own `specialArgs`
 

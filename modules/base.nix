@@ -10,6 +10,10 @@
     ;
 
   wrapperOpts = {config, ...}: {
+    imports = [
+      (lib.mkAliasOptionModuleMD ["flags"] ["prependFlags"])
+    ];
+
     options = {
       basePackage = mkOption {
         type = with types; package;
@@ -32,7 +36,7 @@
         # This is a hack to display a helpful error message to the user about the changed api.
         # Should be changed to just `attrsOf submodule` at some point.
         type = let
-          inherit (lib) any isStringLike zipListsWith findFirst showOption;
+          inherit (lib) any isStringLike showOption;
           actualType = types.submodule ./env-type.nix;
           forgedType =
             actualType
@@ -61,10 +65,24 @@
         };
       };
 
-      flags = mkOption {
+      prependFlags = mkOption {
         type = with types; listOf (coercedTo anything (x: "${x}") str);
         description = lib.mdDoc ''
-          Flags passed to all the wrapped programs.
+          Prepend a flag to the invocation of the program, t**before** any arguments passed to the wrapped executable.
+        '';
+        default = [];
+        example = lib.literalExpression ''
+          [
+            "--config" ./config.sh
+            "--ascii" ./ascii
+          ]
+        '';
+      };
+
+      appendFlags = mkOption {
+        type = with types; listOf (coercedTo anything (x: "${x}") str);
+        description = lib.mdDoc ''
+          Append a flag to the invocation of the program, **after** any arguments passed to the wrapped executable.
         '';
         default = [];
         example = lib.literalExpression ''
@@ -89,7 +107,7 @@
         description = lib.mdDoc ''
           Raw flags passed to makeWrapper.
 
-          See upstream documentation: [make-wrapper.sh](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh).
+          See upstream documentation for [make-wrapper.sh](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh).
         '';
         default = "";
         example = "--argv0 foo --set BAR value";
@@ -145,9 +163,10 @@
                 envArgs = lib.mapAttrsToList envToWrapperArg config.env;
                 # Yes, the arguments are escaped later, yes, this is intended to "double escape",
                 # so that they are escaped for wrapProgram and for the final binary too.
-                flagArgs = map (args: ["--add-flags" (lib.escapeShellArg args)]) config.flags;
+                prependFlagArgs = map (args: ["--add-flags" (lib.escapeShellArg args)]) config.prependFlags;
+                appendFlagArgs = map (args: ["--append-flags" (lib.escapeShellArg args)]) config.appendFlags;
                 pathArgs = map (p: ["--prefix" "PATH" ":" "${p}/bin"]) config.pathAdd;
-                allArgs = lib.flatten (envArgs ++ flagArgs ++ pathArgs);
+                allArgs = lib.flatten (envArgs ++ prependFlagArgs ++ appendFlagArgs ++ pathArgs);
               in ''
                 for file in $out/bin/*; do
                   echo "Wrapping $file"
