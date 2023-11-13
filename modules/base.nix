@@ -213,6 +213,11 @@
                   ([config.basePackage] ++ config.extraPackages)
                 }
               '';
+              passthru =
+                (config.basePackage.passthru or {})
+                // {
+                  unwrapped = config.basePackage;
+                };
             }
             // lib.getAttrs [
               "name"
