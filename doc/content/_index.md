@@ -110,19 +110,29 @@ First, you need to instantiate wrapper-manager's lib. This can be done by pullin
 Wrapper-manager can be pulled in a classic (non-flake) setup for a devshell or nixos configuration, like so:
 
 ```nix
-# shell.nix , or configuration.nix
-
-# or {pkgs, config, ...}: if you are in NixOS...
+# shell.nix
 let
   pkgs = import <nixpkgs> {};
-
   # optionally, pin a commit instead of using master
   wrapper-manager = import (builtins.fetchTarball "https://github.com/viperML/wrapper-manager/archive/refs/heads/master.tar.gz") {
     inherit (pkgs) lib;
   };
 in
-  ...
+  mkShell { ..... }
 ```
+
+```nix
+# configuration.nix
+{ config, pkgs, lib, ... }: let
+  # optionally, pin a commit instead of using master
+  wrapper-manager = import (builtins.fetchTarball "https://github.com/viperML/wrapper-manager/archive/refs/heads/master.tar.gz") {
+    inherit (pkgs) lib;
+  };
+in {
+    .....
+}
+```
+
 
 ### Evaluating
 
