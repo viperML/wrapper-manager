@@ -49,4 +49,11 @@
       "nvim" = "nvim2";
     };
   };
+
+  wrappers.discord = {
+    basePackage = pkgs.discord;
+    flags = [
+      "--disable-gpu"
+    ];
+  };
 }

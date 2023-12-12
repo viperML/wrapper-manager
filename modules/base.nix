@@ -176,6 +176,16 @@
                     ${config.extraWrapperFlags}
                 done
 
+                # Some derivations have nested symlinks here
+                if [[ -d $out/share/applications && ! -w $out/share/applications ]]; then
+                  echo "Detected nested symlink, fixing"
+                  temp=$(mktemp -d)
+                  cp -v $out/share/applications/* $temp
+                  rm -vf $out/share/applications
+                  mkdir -pv $out/share/applications
+                  cp -v $temp/* $out/share/applications
+                fi
+
                 cd $out/bin
                 for exe in *; do
 
@@ -194,10 +204,13 @@
                   # Fix .desktop files
                   # This list of fixes might not be exhaustive
                   for file in $out/share/applications/*; do
-                    echo "Fixing $file"
+                    echo "Fixing file=$file for exe=$exe"
+                    set -x
+                    trap "set +x" ERR
                     sed -i "s#/nix/store/.*/bin/$exe #$out/bin/$newexe #" "$file"
-                    sed -i -E "s#Exec=$exe([[:space:]])#Exec=$out/bin/$newexe\1#g" "$file"
+                    sed -i -E "s#Exec=$exe([[:space:]]*)#Exec=$out/bin/$newexe\1#g" "$file"
                     sed -i -E "s#TryExec=$exe([[:space:]]*)#TryExec=$out/bin/$newexe\1#g" "$file"
+                    set +x
                   done
                 done
 
