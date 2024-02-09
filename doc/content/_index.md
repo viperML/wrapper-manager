@@ -203,6 +203,11 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- TBA
+  - Added `programs` attrset which allows to wrap specific programs
+  - Added `wrapByDefault` which can be set to `false` to disable the previous behavior
+  - Deprecated `renames` instead of setting `programs.<name>.target`
+
 - 2023-11-13
   - Added `prependFlags`, which maps to `--add-flags`
   - Added `appendFlags`, which maps to `--append-flags`
