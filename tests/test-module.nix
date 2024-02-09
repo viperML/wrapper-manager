@@ -8,7 +8,7 @@
     env.FOO.value = "foo";
     env.BAR.value = "bar";
     basePackage = pkgs.hello;
-    flags = [
+    appendFlags = [
       "-g"
       some-special-arg
     ];
@@ -45,14 +45,14 @@
 
   wrappers.neovim = {
     basePackage = pkgs.neovim;
-    renames = {
-      "nvim" = "nvim2";
+    programs.nvim = {
+      target = "nvim2";
     };
   };
 
   wrappers.discord = {
     basePackage = pkgs.discord;
-    flags = [
+    programs.discord.prependFlags = [
       "--disable-gpu"
     ];
   };
