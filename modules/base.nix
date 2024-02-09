@@ -33,29 +33,7 @@
       };
 
       env = mkOption {
-        # This is a hack to display a helpful error message to the user about the changed api.
-        # Should be changed to just `attrsOf submodule` at some point.
-        type = let
-          inherit (lib) any isStringLike showOption;
-          actualType = types.submodule ./env-type.nix;
-          forgedType =
-            actualType
-            // {
-              # There's special handling if this value is present which makes merging treat this type as any other submodule type,
-              # so we lie about there being no sub-modules so that our `check` and `merge` get called.
-              getSubModules = null;
-              check = v: isStringLike v || actualType.check v;
-              merge = loc: defs:
-                if any (def: isStringLike def.value) defs
-                then
-                  throw ''
-                    ${showOption loc} has been changed to an attribute set.
-                    Instead of assigning value directly, use ${showOption (loc ++ ["value"])} = <value>;
-                  ''
-                else (actualType.merge loc defs);
-            };
-        in
-          types.attrsOf forgedType;
+        type = with types; attrsOf (submodule ./env-type.nix);
         description = lib.mdDoc ''
           Structured environment variables.
         '';
