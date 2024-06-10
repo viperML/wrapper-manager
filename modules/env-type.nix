@@ -24,6 +24,9 @@ in {
       description = mdDoc ''
         Value of the variable to be set.
         Set to `null` to unset the variable.
+
+        Note that any environment variable will be escaped. For example, `value = "$HOME"`
+        will be converted to the literal `$HOME`, with its dollar sign.
       '';
     };
 
