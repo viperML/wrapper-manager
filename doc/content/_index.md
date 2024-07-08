@@ -107,7 +107,7 @@ First, you need to instantiate wrapper-manager's lib. This can be done by pullin
 
 ### Classic
 
-Wrapper-manager can be pulled in a classic (non-flake) setup for a devshell or nixos configuration, like so:
+Wrapper-manager can be pulled in a classic (non-flake) setup for a dev-shell or NixOS configuration, like so:
 
 ```nix
 # shell.nix
@@ -139,7 +139,7 @@ in {
 Now that you already have `wrapper-manager` in scope, you need to evaluate `wrapper-manager.lib`. The argument is an attrset with following elements:
 
 - `pkgs`: your nixpkgs instance used to bring `symlinkJoin` and `makeWrapper`, as well as passing it through the modules for convenience.
-- `modules`: a list of wrapper-manager modules. As with NixOS, a module can be passed as a path to a module or directly. A proper module is either an attset, or a function to attrset.
+- `modules`: a list of wrapper-manager modules. As with NixOS, a module can be passed as a path to a module or directly. A proper module is either an attrset, or a function to attrset.
 - `specialArgs` (optional): extra arguments passed to the module system.
 
 A convenience shorthand for `(wrapper-manager.lib {...}).config.build.toplevel` is available through: `wrapper-manager.lib.build {}`, which is probably what you want in 99% of the cases.
@@ -164,7 +164,7 @@ A convenience shorthand for `(wrapper-manager.lib {...}).config.build.toplevel` 
 # => «derivation /nix/store/...»
 ```
 
-For example, if you want to use wrapper-manager in the context of a devshell, you can instatiate it directly like so:
+For example, if you want to use wrapper-manager in the context of a dev-shell, you can instantiate it directly like so:
 ```nix
 # pkgs and wrapper-manager in scope, see previous steps
 # ...
@@ -194,7 +194,7 @@ mkShell {
 
 These are some examples of wrapper-manager used in the wild. Feel free to PR yours.
 
-- https://github.com/viperML/dotfiles/tree/master/wrappers
+- https://github.com/viperML/dotfiles/tree/master/modules/wrapper-manager
 
 
 ## To-do's
