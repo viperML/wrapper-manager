@@ -1,4 +1,4 @@
-{lib}: let
+{lib ? (import <nixpkgs> {}).lib}: let
   eval = {
     pkgs,
     modules ? [],
