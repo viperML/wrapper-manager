@@ -56,4 +56,12 @@
       "--disable-gpu"
     ];
   };
+
+  wrappers.hello-wrapped = {
+    basePackage = pkgs.hello;
+    overrideAttrs = old: {
+      name = "hello-wrapped";
+      pname = "hello-wrapped-bad";
+    };
+  };
 }
