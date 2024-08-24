@@ -145,6 +145,17 @@
           }
         '';
       };
+
+      postBuild = mkOption {
+        type = with types; str;
+        description = ''
+          Extra fragment of bash to be run after the main wrapper-manager code.
+          '';
+        default = "";
+        example = ''
+          $out/bin/nvim -l ''${./check.lua}
+        '';
+      };
     };
 
     config = {
@@ -238,6 +249,8 @@
                   else "#")
                 ([config.basePackage] ++ config.extraPackages)
               }
+
+              ${config.postBuild}
             '';
             passthru =
               (config.basePackage.passthru or {})
