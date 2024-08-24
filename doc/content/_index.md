@@ -203,8 +203,11 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- 2024-08-24
+  - Added `postBuild` option
+
 - 2024-08-14
-  - Added `.overrideAttrs` option
+  - Added `overrideAttrs` option
 
 - 2023-11-13
   - Added `prependFlags`, which maps to `--add-flags`
