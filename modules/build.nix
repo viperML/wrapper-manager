@@ -15,7 +15,7 @@ in {
       toplevel = mkOption {
         type = with types; package;
         readOnly = true;
-        description = lib.mdDoc ''
+        description =   ''
           (Output) Derivation that merges all the wrappers into a single package.
         '';
       };
@@ -23,7 +23,7 @@ in {
       packages = mkOption {
         type = with types; attrsOf package;
         readOnly = true;
-        description = lib.mdDoc ''
+        description =   ''
           (Output) Attribute set of name=pkg. Useful for adding them to a flake's packages output.
         '';
       };

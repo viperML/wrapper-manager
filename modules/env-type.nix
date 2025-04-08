@@ -4,12 +4,12 @@
   name,
   ...
 }: let
-  inherit (lib) mkOption types mdDoc;
+  inherit (lib) mkOption types;
 in {
   options = {
     name = mkOption {
       type = types.str;
-      description = mdDoc ''
+      description = ''
         Name of the variable.
       '';
       default = name;
@@ -21,7 +21,7 @@ in {
         strLike = coercedTo anything (x: "${x}") str;
       in
         nullOr strLike;
-      description = mdDoc ''
+      description = ''
         Value of the variable to be set.
         Set to `null` to unset the variable.
 
@@ -32,7 +32,7 @@ in {
 
     force = mkOption {
       type = types.bool;
-      description = mdDoc ''
+      description = ''
         Whether the value should be always set to the specified value.
         If set to `true`, the program will not inherit the value of the variable
         if it's already present in the environment.

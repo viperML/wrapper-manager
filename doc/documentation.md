@@ -1,5 +1,3 @@
-####
-
 <h1>
     <p align="center">
         <b>wrapper-manager</b>
@@ -12,10 +10,9 @@
     </p>
 </h3>
 
-<p align="center" style="margin: 2em auto;">
-  <img src="./doc/static/wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
+<p class="wm-logo" align="center" style="margin: 2em auto;">
+  <img src="./wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
 </p>
-
 
 ```nix
 {pkgs, ...}: {
