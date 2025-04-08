@@ -15,7 +15,7 @@ hero:
       link: /api
 
   image:
-    src: ./wrapper.svg
+    src: /wrapper.svg
     alt: wrapper-manager
 
 features:
