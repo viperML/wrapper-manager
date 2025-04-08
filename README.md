@@ -1,1 +1,1 @@
-./doc/content/_index.md
+./doc/documentation.md
