@@ -14,6 +14,12 @@
   <img src="./wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
 </p>
 
+<style>
+  .VPDoc .wm-logo {
+    display: none;
+  }
+</style>
+
 ```nix
 {pkgs, ...}: {
   # Build a custom nushell wrapper
