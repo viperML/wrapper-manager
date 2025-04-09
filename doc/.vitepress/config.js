@@ -27,7 +27,7 @@ export default defineConfig({
     ],
 
     outline: "deep",
-    logo: "./wrapper.svg",
+    logo: "/wrapper.svg",
   },
   vite: {
     ssr: {
