@@ -11,7 +11,7 @@
 </h3>
 
 <p class="wm-logo" align="center" style="margin: 2em auto;">
-  <img src="./doc/public/wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
+  <img src="./public/wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
 </p>
 
 <style>

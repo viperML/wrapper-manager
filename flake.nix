@@ -50,13 +50,13 @@
               }).options;
           }).optionsJSON;
 
-        doc =
+        docs =
           with pkgs;
           buildNpmPackage {
-            name = "doc";
-            src = ./doc;
+            name = "docs";
+            src = ./docs;
             npmDeps = importNpmLock {
-              npmRoot = ./doc;
+              npmRoot = ./docs;
             };
 
             inherit (importNpmLock) npmConfigHook;
