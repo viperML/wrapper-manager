@@ -16,7 +16,7 @@ export default defineConfig({
       {
         text: "Sections",
         items: [
-          { text: "Documentation", link: "/documentation" },
+          { text: "Read Me", link: "/readme" },
           { text: "API", link: "/api" },
         ],
       },

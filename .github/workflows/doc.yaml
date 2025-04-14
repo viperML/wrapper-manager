@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'doc/**'
+      - 'docs/**'
       - 'modules/**'
   workflow_dispatch:
 
