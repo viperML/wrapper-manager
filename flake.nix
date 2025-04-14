@@ -62,17 +62,11 @@
             inherit (importNpmLock) npmConfigHook;
             env.WRAPPER_MANAGER_OPTIONS_JSON = self.packages.${pkgs.system}.optionsJSON;
 
-            # VitePress hangs if you don't pipe the output into a file
             buildPhase = ''
               runHook preBuild
 
-                local exit_status=0
-                npm run build -- --base=/wrapper-manager/ > build.log 2>&1 || {
-                    exit_status=$?
-                    :
-                }
-                cat build.log
-                return $exit_status
+              # Vitepress hangs when printing normally
+              npm run build -- --base=/wrapper-manager/ 2>&1 | cat
 
               runHook postBuild
             '';

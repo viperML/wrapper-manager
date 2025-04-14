@@ -22,9 +22,6 @@ jobs:
       name: github-pages
 
     steps:
-      - name: 🔄 Checkout
-        uses: actions/checkout@v4
-
       - name: 📦 Install Nix
         uses: cachix/install-nix-action@master
         with:
@@ -33,7 +30,7 @@ jobs:
             extra-experimental-features = nix-command flakes pipe-operators
 
       - name: 🏗️ Build
-        run: nix build .#doc -L
+        run: nix build github:${{ github.repository }}#docs -L
 
       - name: 📤 Upload artifacts
         id: deployment
