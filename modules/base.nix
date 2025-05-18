@@ -9,6 +9,48 @@ let
     types
     ;
 
+  envToWrapperArg =
+    _:
+    {
+      name,
+      force,
+      value,
+    }:
+    let
+      unsetArg =
+        if !force then
+          (lib.warn ''
+            ${
+              lib.showOption [
+                "env"
+                name
+                "value"
+              ]
+            } is null (indicating unsetting the variable), but ${
+              lib.showOption [
+                "env"
+                name
+                "force"
+              ]
+            } is false. This option will have no effect
+          '' [ ])
+        else
+          [
+            "--unset"
+            name
+          ];
+      setArg =
+        let
+          arg = if force then "--set" else "--set-default";
+        in
+        [
+          arg
+          name
+          value
+        ];
+    in
+    if value == null then unsetArg else setArg;
+
   wrapperOpts =
     { config, ... }:
     {
@@ -163,138 +205,119 @@ let
       config = {
         wrapped =
           let
-            envToWrapperArg =
-              name: config:
+            mkWrapper =
+              basePackage:
               let
-                optionStr =
-                  attr:
-                  lib.showOption [
-                    "env"
-                    name
-                    attr
-                  ];
-                unsetArg =
-                  if !config.force then
-                    (lib.warn ''
-                      ${optionStr "value"} is null (indicating unsetting the variable), but ${optionStr "force"} is false. This option will have no effect
-                    '' [ ])
-                  else
-                    [
-                      "--unset"
-                      config.name
-                    ];
-                setArg =
-                  let
-                    arg = if config.force then "--set" else "--set-default";
-                  in
-                  [
-                    arg
-                    config.name
-                    config.value
-                  ];
+                hasMan = builtins.any (builtins.hasAttr "man") ([ basePackage ] ++ config.extraPackages);
               in
-              if config.value == null then unsetArg else setArg;
-            result = pkgs.symlinkJoin (
-              {
-                paths = [ config.basePackage ] ++ config.extraPackages;
-                nativeBuildInputs = [ pkgs.makeWrapper ];
-                postBuild =
-                  let
-                    envArgs = lib.mapAttrsToList envToWrapperArg config.env;
-                    # Yes, the arguments are escaped later, yes, this is intended to "double escape",
-                    # so that they are escaped for wrapProgram and for the final binary too.
-                    prependFlagArgs = map (args: [
-                      "--add-flags"
-                      (lib.escapeShellArg args)
-                    ]) config.prependFlags;
-                    appendFlagArgs = map (args: [
-                      "--append-flags"
-                      (lib.escapeShellArg args)
-                    ]) config.appendFlags;
-                    pathArgs = map (p: [
-                      "--prefix"
-                      "PATH"
-                      ":"
-                      "${p}/bin"
-                    ]) config.pathAdd;
-                    allArgs = lib.flatten (envArgs ++ prependFlagArgs ++ appendFlagArgs ++ pathArgs);
-                  in
-                  ''
-                    for file in $out/bin/*; do
-                      echo "Wrapping $file"
-                      wrapProgram \
-                        $file \
-                        ${lib.escapeShellArgs allArgs} \
-                        ${config.extraWrapperFlags}
-                    done
+              (
+                (
+                  (pkgs.symlinkJoin {
+                    inherit (basePackage) name;
+                    paths = [ basePackage ] ++ config.extraPackages;
+                    nativeBuildInputs = [ pkgs.makeWrapper ];
+                    postBuild =
+                      let
+                        envArgs = lib.mapAttrsToList envToWrapperArg config.env;
+                        # Yes, the arguments are escaped later, yes, this is intended to "double escape",
+                        # so that they are escaped for wrapProgram and for the final binary too.
+                        prependFlagArgs = map (args: [
+                          "--add-flags"
+                          (lib.escapeShellArg args)
+                        ]) config.prependFlags;
+                        appendFlagArgs = map (args: [
+                          "--append-flags"
+                          (lib.escapeShellArg args)
+                        ]) config.appendFlags;
+                        pathArgs = map (p: [
+                          "--prefix"
+                          "PATH"
+                          ":"
+                          "${p}/bin"
+                        ]) config.pathAdd;
+                        allArgs = lib.flatten (envArgs ++ prependFlagArgs ++ appendFlagArgs ++ pathArgs);
+                      in
+                      ''
+                        for file in $out/bin/*; do
+                          echo "Wrapping $file"
+                          wrapProgram \
+                            $file \
+                            ${lib.escapeShellArgs allArgs} \
+                            ${config.extraWrapperFlags}
+                        done
 
-                    # Some derivations have nested symlinks here
-                    if [[ -d $out/share/applications && ! -w $out/share/applications ]]; then
-                      echo "Detected nested symlink, fixing"
-                      temp=$(mktemp -d)
-                      cp -v $out/share/applications/* $temp
-                      rm -vf $out/share/applications
-                      mkdir -pv $out/share/applications
-                      cp -v $temp/* $out/share/applications
-                    fi
+                        # Some derivations have nested symlinks here
+                        if [[ -d $out/share/applications && ! -w $out/share/applications ]]; then
+                          echo "Detected nested symlink, fixing"
+                          temp=$(mktemp -d)
+                          cp -v $out/share/applications/* $temp
+                          rm -vf $out/share/applications
+                          mkdir -pv $out/share/applications
+                          cp -v $temp/* $out/share/applications
+                        fi
 
-                    cd $out/bin
-                    for exe in *; do
+                        cd $out/bin
+                        for exe in *; do
 
-                      if false; then
-                        exit 2
-                      ${lib.concatStringsSep "\n" (
-                        lib.mapAttrsToList (name: value: ''
-                          elif [[ $exe == ${lib.escapeShellArg name} ]]; then
-                            newexe=${lib.escapeShellArg value}
-                            mv -vf $exe $newexe
-                        '') config.renames
-                      )}
-                      else
-                        newexe=$exe
-                      fi
+                          if false; then
+                            exit 2
+                          ${lib.concatStringsSep "\n" (
+                            lib.mapAttrsToList (name: value: ''
+                              elif [[ $exe == ${lib.escapeShellArg name} ]]; then
+                                newexe=${lib.escapeShellArg value}
+                                mv -vf $exe $newexe
+                            '') config.renames
+                          )}
+                          else
+                            newexe=$exe
+                          fi
 
-                      # Fix .desktop files
-                      # This list of fixes might not be exhaustive
-                      for file in $out/share/applications/*; do
-                        echo "Fixing file=$file for exe=$exe"
-                        set -x
-                        trap "set +x" ERR
-                        sed -i "s#/nix/store/.*/bin/$exe #$out/bin/$newexe #" "$file"
-                        sed -i -E "s#Exec=$exe([[:space:]]*)#Exec=$out/bin/$newexe\1#g" "$file"
-                        sed -i -E "s#TryExec=$exe([[:space:]]*)#TryExec=$out/bin/$newexe\1#g" "$file"
-                        set +x
-                      done
-                    done
+                          # Fix .desktop files
+                          # This list of fixes might not be exhaustive
+                          for file in $out/share/applications/*; do
+                            echo "Fixing file=$file for exe=$exe"
+                            set -x
+                            trap "set +x" ERR
+                            sed -i "s#/nix/store/.*/bin/$exe #$out/bin/$newexe #" "$file"
+                            sed -i -E "s#Exec=$exe([[:space:]]*)#Exec=$out/bin/$newexe\1#g" "$file"
+                            sed -i -E "s#TryExec=$exe([[:space:]]*)#TryExec=$out/bin/$newexe\1#g" "$file"
+                            set +x
+                          done
+                        done
 
+                        ${lib.optionalString hasMan ''
+                          mkdir -p ''${!outputMan}
+                          ${lib.concatMapStringsSep "\n" (
+                            # p: if lib.hasAttr "man" p then "${pkgs.xorg.lndir}/bin/lndir -silent ${p.man} $out" else "#"
+                            p:
+                            if p ? "man" then
+                              "${lib.getExe pkgs.xorg.lndir} -silent ${p.man} \${!outputMan}"
+                            else
+                              "echo \"No man output for ${lib.getName p}\""
+                          ) ([ basePackage ] ++ config.extraPackages)}
+                        ''}
 
-                    # I don't know of a better way to create a multe-output derivation for symlinkJoin
-                    # So if the packages have man, just link them into $out
-                    ${lib.concatMapStringsSep "\n" (
-                      p: if lib.hasAttr "man" p then "${pkgs.xorg.lndir}/bin/lndir -silent ${p.man} $out" else "#"
-                    ) ([ config.basePackage ] ++ config.extraPackages)}
-
-                    ${config.postBuild}
-                  '';
-                passthru = (config.basePackage.passthru or { }) // {
-                  unwrapped = config.basePackage;
-                };
-              }
-              // {
-                inherit (config.basePackage) name meta;
-              }
-            );
+                        ${config.postBuild}
+                      '';
+                    passthru = (basePackage.passthru or { }) // {
+                      unwrapped = basePackage;
+                    };
+                    outputs = [
+                      "out"
+                    ] ++ (lib.optional hasMan "man");
+                    meta = basePackage.meta // {
+                      outputsToInstall = [
+                        "out"
+                      ] ++ (lib.optional hasMan "man");
+                    };
+                  })
+                  // {
+                    override = newAttrs: mkWrapper (basePackage.override newAttrs);
+                  }
+                )
+              );
           in
-          lib.recursiveUpdate
-            ((result.overrideAttrs config.overrideAttrs).overrideAttrs (
-              old:
-              lib.optionalAttrs (lib.hasAttr "pname" old) {
-                pname = lib.warn "wrapper-manager: ${old.name}: symlinkJoin requires a name, not a pname+version" old.pname;
-              }
-            ))
-            {
-              meta.outputsToInstall = [ "out" ];
-            };
+          mkWrapper config.basePackage;
       };
     };
 in
