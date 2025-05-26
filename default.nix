@@ -1,19 +1,22 @@
-{lib}: let
-  eval = {
-    pkgs,
-    modules ? [],
-    specialArgs ? {},
-  }:
+let
+  eval =
+    {
+      pkgs,
+      lib ? pkgs.lib,
+      modules ? [ ],
+      specialArgs ? { },
+    }:
     lib.evalModules {
-      modules =
-        [
-          ./modules
-        ]
-        ++ modules;
-      specialArgs = {inherit pkgs;} // specialArgs;
+      modules = [
+        ./modules
+      ] ++ modules;
+      specialArgs = {
+        inherit pkgs;
+      } // specialArgs;
     };
-in {
-  lib = {
+in
+{
+  v2 = {
     inherit eval;
     __functor = _: eval;
     build = args: (eval args).config.build.toplevel;
