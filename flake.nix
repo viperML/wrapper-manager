@@ -26,10 +26,9 @@
             )
           );
     in
-    (import ./default.nix {
-      inherit (nixpkgs) lib;
-    })
-    // {
+    {
+      lib = import ./default.nix;
+
       formatter = forAllSystems (pkgs: pkgs.alejandra);
 
       devShells = forAllSystems (pkgs: {
@@ -44,7 +43,7 @@
         optionsJSON =
           (pkgs.nixosOptionsDoc {
             options =
-              (self.lib {
+              (self.lib.v2 {
                 inherit pkgs;
                 modules = [ ];
               }).options;
