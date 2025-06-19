@@ -16,9 +16,7 @@ let
     };
 in
 {
-  lib = builtins.abort "wrapper-manager.lib is deprecated, please upgrade to the .v2 api: https://github.com/viperML/wrapper-manager/pull/26";
-
-  v2 = {
+  lib = {
     inherit eval;
     __functor = _: eval;
     wrapWith =

@@ -22,7 +22,7 @@
   # ~/.config/nushell is not neeeded!
   wrappers.nushell = {
     basePackage = pkgs.nushell;
-    flags = [
+    prependFlags = [
       "--env-config"
       ./env.nu
       "--config"
@@ -74,117 +74,88 @@ around your applications, providing an easy-to use interface, and also getting
 around some of their shortcomings.
 
 
-## **Module documentation**
+## **Documentation**
 
-https://viperml.github.io/wrapper-manager/docs/module
+https://viperml.github.io/wrapper-manager
 
 
-## **Installation/usage**
+## **Installation and usage**
 
-First, you need to instantiate wrapper-manager's lib. This can be done by pulling the WM flake, or by pulling the repo tarball directly.
-
-### Flake
-
-```nix
-# flake.nix
-{
-  inputs = {
-    nixpkgs.url = "...";
-
-    # Add the wrapper-manager flake
-    wrapper-manager = {
-      url = "github:viperML/wrapper-manager";
-      # WM's nixpkgs is only used for tests, you can safely drop this if needed.
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
-  outputs = {self, nixpkgs, wrapper-manager}: { ... };
-}
-```
-
-### Classic
-
-Wrapper-manager can be pulled in a classic (non-flake) setup for a dev-shell or NixOS configuration, like so:
+Wrapper-manager is a library for creating wrappers. What you do with the wrappers is up to you,
+you can use them to be installed with `nix-env -i`, add them to your NixOS config, to a devshell,
+etc.
 
 ```nix
-# shell.nix
 let
-  pkgs = import <nixpkgs> {};
-  # optionally, pin a commit instead of using master
-  wrapper-manager = import (builtins.fetchTarball "https://github.com/viperML/wrapper-manager/archive/refs/heads/master.tar.gz") {
-    inherit (pkgs) lib;
-  };
-in
-  mkShell { ..... }
-```
+  # Evaluate the module system
 
-```nix
-# configuration.nix
-{ config, pkgs, lib, ... }: let
-  # optionally, pin a commit instead of using master
-  wrapper-manager = import (builtins.fetchTarball "https://github.com/viperML/wrapper-manager/archive/refs/heads/master.tar.gz") {
-    inherit (pkgs) lib;
-  };
-in {
-    .....
-}
-```
-
-
-### Evaluating
-
-Now that you already have `wrapper-manager` in scope, you need to evaluate `wrapper-manager.lib`. The argument is an attrset with following elements:
-
-- `pkgs`: your nixpkgs instance used to bring `symlinkJoin` and `makeWrapper`, as well as passing it through the modules for convenience.
-- `modules`: a list of wrapper-manager modules. As with NixOS, a module can be passed as a path to a module or directly. A proper module is either an attrset, or a function to attrset.
-- `specialArgs` (optional): extra arguments passed to the module system.
-
-A convenience shorthand for `(wrapper-manager.lib {...}).config.build.toplevel` is available through: `wrapper-manager.lib.build {}`, which is probably what you want in 99% of the cases.
-
-```nix
-# This expression outputs a package, which collects all wrappers.
-# You can add it to:
-# - environment.systemPackages
-# - home.packages
-# - mkShell { packages = [...]; }
-# - etc
-
-(wrapper-manager.lib.build {
-  inherit pkgs;
-  modules = [
-    ./my-module.nix
-    {
-      wrappers.foo = { ... };
-    }
-  ];
-})
-# => «derivation /nix/store/...»
-```
-
-For example, if you want to use wrapper-manager in the context of a dev-shell, you can instantiate it directly like so:
-```nix
-# pkgs and wrapper-manager in scope, see previous steps
-# ...
-mkShell {
-  packages = [
-
-    (wrapper-manager.lib.build {
-      inherit pkgs;
-      modules = [{
-        wrappers.stack = {
-          basePackage = pkgs.stack;
-          flags = [
-            "--resolver"
-            "lts"
-          ];
-          env.NO_COLOR.value = "1";
+  wm-eval = wrapper-manager.lib {
+    inherit pkgs;
+    modules = [
+      ./other-module.nix
+      {
+        wrappers.hello = {
+          basePackage = pkgs.hello;
+          prependFlags = ["-g" "Hi"];
         };
-      }];
-    })
+      }
+    ];
+  };
 
-  ];
+  # Extract one of the wrapped packages
+  myHello = wm-eval.config.wrappers.hello.wrapped;
+  #=>       «derivation /nix/store/...»
+
+  # Extract all wrapped packages
+  allWrappers = wm-eval.config.build.packages;
+  #=>           { hello = «derivation /nix/store/...»; }
+
+  # Add all the wrappers to systemPackages:
+  environment.systemPackages = [ ] ++ (builtins.attrValues wm-eval-config.build.packages);
+  # or using the bundle:
+  environment.systemPackages = [ wm-eval.config.build.toplevel ];
+
+
+  # Wrap a singular package
+  myGit = wrapper-manager.lib.wrapWith pkgs {
+    basePackage = pkgs.git;
+    env.GIT_CONFIG.value = ./gitconfig;
+  };
+  #=> «derivation /nix/store/...»
+in
+  ...
+```
+
+### How do I get `wrapper-manager.lib` ?
+
+The main entrypoint is `wrapper-manager.lib`. To get it:
+
+### Flakes
+
+```nix
+{
+  inputs.wrapper-manager.url = "github.com:viperML/wrapper-manager";
+
+  outputs = {self, wrapper-manager}: let
+    # wrapper-manager.lib { ... }
+  in {};
 }
+```
+
+### Npins
+
+```
+$ npins add github viperML wrapper-manager
+```
+
+```nix
+let
+  sources = import ./npins;
+  wrapper-manager = import sources.wrapper-manager;
+
+  # wrapper-manager.lib { ... }
+in
+  ...
 ```
 
 
@@ -200,6 +171,10 @@ These are some examples of wrapper-manager used in the wild. Feel free to PR you
 https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
+
+- 2025-06-19
+  - Full rewrite
+  - `flags` has been removed in favor of `prependFlags`
 
 - 2024-08-24
   - Added `postBuild` option
@@ -224,10 +199,8 @@ https://github.com/viperML/wrapper-manager/issues
 - 2023-08-12
   - Added wrappers.name.renames option.
 
-<div style="display: none;">
-  <style>
-    .VPDoc .wm-logo {
-      display: none;
-    }
-  </style>
-</div>
+<style>
+  .VPDoc .wm-logo {
+    display: none;
+  }
+</style>
