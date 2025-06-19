@@ -3,9 +3,11 @@
   lib,
   name,
   ...
-}: let
+}:
+let
   inherit (lib) mkOption types;
-in {
+in
+{
   options = {
     name = mkOption {
       type = types.str;
@@ -16,10 +18,16 @@ in {
     };
 
     value = mkOption {
-      type = let
-        inherit (types) coercedTo anything str nullOr;
-        strLike = coercedTo anything (x: "${x}") str;
-      in
+      type =
+        let
+          inherit (types)
+            coercedTo
+            anything
+            str
+            nullOr
+            ;
+          strLike = coercedTo anything (x: "${x}") str;
+        in
         nullOr strLike;
       description = ''
         Value of the variable to be set.
@@ -43,5 +51,45 @@ in {
       default = config.value == null;
       defaultText = lib.literalMD "true if `value` is null, otherwise false";
     };
+
+    asFlags = mkOption {
+      type = with types; listOf str;
+      internal = true;
+      readOnly = true;
+    };
+  };
+
+  config = {
+    asFlags =
+      let
+        unsetArgs =
+          if !config.force then
+            (lib.warn ''
+              ${
+                lib.showOption [
+                  "env"
+                  config.name
+                  "value"
+                ]
+              } is null (indicating unsetting the variable), but ${
+                lib.showOption [
+                  "env"
+                  config.name
+                  "force"
+                ]
+              } is false. This option will have no effect
+            '' [ ])
+          else
+            [
+              "--unset"
+              config.name
+            ];
+        setArgs = [
+          (if config.force then "--set" else "--set-default")
+          config.name
+          config.value
+        ];
+      in
+      (if config.value == null then unsetArgs else setArgs);
   };
 }
