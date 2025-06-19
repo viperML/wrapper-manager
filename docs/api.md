@@ -12,8 +12,13 @@ import { data } from "./wm.data.js";
 import { RenderDocs } from "easy-nix-documentation";
 </script>
 
+## Main API
 
-<RenderDocs :options="data" :exclude="[/^_module\.args$/, /^build\.*/]" />
+<RenderDocs :options="data" :exclude="[/^_module\.args$/, /^build\.*/, /programs/]"  />
+
+## Program configuration
+
+<RenderDocs :options="data" :include="[/programs/]" />
 
 ## Outputs
 
