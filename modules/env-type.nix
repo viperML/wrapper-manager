@@ -15,6 +15,7 @@ in
         Name of the variable.
       '';
       default = name;
+      example = "GIT_CONFIG";
     };
 
     value = mkOption {
@@ -36,6 +37,7 @@ in
         Note that any environment variable will be escaped. For example, `value = "$HOME"`
         will be converted to the literal `$HOME`, with its dollar sign.
       '';
+      example = lib.literalExpression "./gitconfig";
     };
 
     force = mkOption {
@@ -50,6 +52,7 @@ in
       '';
       default = config.value == null;
       defaultText = lib.literalMD "true if `value` is null, otherwise false";
+      example = true;
     };
 
     asFlags = mkOption {
