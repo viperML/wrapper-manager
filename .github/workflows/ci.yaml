@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  pages: write
+  contents: write
+
+jobs:
+  docs-build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+
+    steps:
+      - name: 📦 Install Nix
+        uses: cachix/install-nix-action@master
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: 🏗️ Build
+        run: nix build -f ./docs -L
+
+      - name: 📤 Upload artifacts
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./result
+
+  docs-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: docs-build
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
