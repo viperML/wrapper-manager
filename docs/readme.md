@@ -14,11 +14,6 @@
   <img src="./public/wrapper.svg" alt="wrapped nixos logo" onerror="this.remove()"  width="350"/>
 </p>
 
-<style>
-  .VPDoc .wm-logo {
-    display: none;
-  }
-</style>
 
 ```nix
 {pkgs, ...}: {
@@ -228,3 +223,11 @@ https://github.com/viperML/wrapper-manager/issues
 
 - 2023-08-12
   - Added wrappers.name.renames option.
+
+<div style="display: none;">
+  <style>
+    .VPDoc .wm-logo {
+      display: none;
+    }
+  </style>
+</div>
