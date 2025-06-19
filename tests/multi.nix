@@ -4,7 +4,7 @@ let
   };
   wrapper-manager = import ../.;
 in
-wrapper-manager.v2 {
+wrapper-manager.lib {
   inherit pkgs;
   modules = [
     {

@@ -9,7 +9,7 @@ let
   options_json =
     (nixosOptionsDoc {
       options =
-        ((import ../.).v2 {
+        ((import ../.).lib {
           inherit pkgs;
           modules = [ ];
         }).options;
