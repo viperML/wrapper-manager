@@ -39,6 +39,11 @@ in
       type = with types; attrsOf (submodule ./env-type.nix);
       default = { };
       description = "Structured configuration for environment variables.";
+      example = lib.literalExpression '' 
+        {
+          GIT_CONFIG.value = ./gitconfig;
+        }
+      '';
     };
     extraWrapperFlags = mkOption {
       type = with types; separatedString " ";

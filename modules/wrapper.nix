@@ -23,7 +23,21 @@ in
 
     programs = mkOption {
       default = { };
-      description = "Programs to wrap";
+      description = "Wrap specific binaries with specific options. You may use it to skip wrapping some program.";
+      example = lib.literalExpression '' 
+        {
+          supervim = {
+            target = "neovim";
+          };
+
+          git = {
+            env.GIT_CONFIG.value = ./gitconfig;
+          };
+
+          # Don't wrap scalar
+          scalar = {};
+        }
+      '';
       type = types.attrsOf (
         types.submoduleWith {
           modules = [
