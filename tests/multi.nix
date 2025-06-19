@@ -35,13 +35,13 @@ wrapper-manager.v2 {
         basePackage = pkgs.zellij;
       };
 
-      wrappers.hello-bad = {
-        basePackage = pkgs.hello;
-        flags = [
-          "-g"
-          "g"
-        ];
-      };
+      # wrappers.hello-bad = {
+      #   basePackage = pkgs.hello;
+      #   flags = [
+      #     "-g"
+      #     "g"
+      #   ];
+      # };
 
       wrappers.neofetch = {
         basePackage = pkgs.neofetch.override { x11Support = false; };

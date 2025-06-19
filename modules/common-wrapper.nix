@@ -13,29 +13,37 @@ in
     wrapFlags = mkOption {
       type = flagsType;
       default = [ ];
-      description = "Flags passed to makeWrapper.";
+      description = "Structured flags passed to makeWrapper.";
+      example = [
+        "--argv0"
+        "myprog"
+      ];
     };
     appendFlags = mkOption {
       type = flagsType;
       default = [ ];
-      description = "Flags passed after any arguments to the wrapped program.";
+      description = "Flags passed after any arguments to the wrapped program. Usually you want to use prependFlags instead.";
+      example = lib.literalExpression ''
+        ["--config-file" ./config.toml]
+      '';
     };
     prependFlags = mkOption {
       type = flagsType;
       default = [ ];
       description = "Flags passed before any arguments to the wrapped program.";
+      example = lib.literalExpression ''
+        ["--config-file" ./config.toml]
+      '';
     };
     env = mkOption {
       type = with types; attrsOf (submodule ./env-type.nix);
       default = { };
-      description = "FIXME env";
+      description = "Structured configuration for environment variables.";
     };
     extraWrapperFlags = mkOption {
       type = with types; separatedString " ";
       description = ''
-        Raw flags passed to makeWrapper.
-
-        See upstream documentation for make-wrapper.sh : https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh
+        Raw flags passed to makeWrapper. You may want to use wrapFlags instead.
       '';
       default = "";
       example = "--argv0 foo --set BAR value";
@@ -49,11 +57,13 @@ in
       example = lib.literalExpression "[ pkgs.starship ]";
     };
     wrapperType = mkOption {
+      description = "Whether to use a binary or a shell wrapper.";
       type = types.enum [
         "shell"
         "binary"
       ];
       default = "binary";
+      example = "shell";
     };
   };
 

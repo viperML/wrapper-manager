@@ -20,7 +20,7 @@ in
     wrapped = mkOption {
       type = types.package;
       readOnly = true;
-      description = "The wrapped package";
+      description = "(Read-only) The final wrapped package";
     };
 
     overrideAttrs = mkOption {
@@ -32,7 +32,7 @@ in
       defaultText = lib.literalExpression "lib.id";
       example = lib.literalExpression ''
         old: {
-          pname = "''${old.pname}-wrapped";
+          pname = "''${pname}-with-settings";
         }
       '';
     };
@@ -40,6 +40,11 @@ in
     postBuild = mkOption {
       type = types.str;
       default = "";
+      description = "Raw commands to execute after the wrapping process has finished";
+      example = ''
+        echo "Running sanity check"
+        $out/bin/nvim '+q'
+      '';
     };
   };
 
