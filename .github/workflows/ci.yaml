@@ -25,6 +25,9 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
           nix_path: nixpkgs=channel:nixos-unstable
 
+      - uses: actions/checkout@v4
+        name: 🛎️ Checkout
+
       - name: 🏗️ Build
         run: nix build -f ./docs -L
 
