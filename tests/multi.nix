@@ -8,6 +8,7 @@ wrapper-manager.lib {
   inherit pkgs;
   modules = [
     {
+      _file = ./multi.nix;
       wrapperType = "shell";
 
       wrappers.discord = {

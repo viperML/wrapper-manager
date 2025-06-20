@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  options,
   ...
 }:
 let
@@ -27,6 +28,16 @@ in
         ["--config-file" ./config.toml]
       '';
     };
+    # Poor's man mkRemovedOptionModule
+    # As we don't have assertions
+    flags = mkOption {
+      type = flagsType;
+      default = [ ];
+      description = "(Deprecated) Flags passed before any arguments to the wrapped program. Use prependFlags instead";
+      apply = throw "The option `${lib.showOption [ "flags" ]}' used in ${lib.showFiles options.flags.files} is deprecated. Use `${
+        lib.showOption [ "prependFlags" ]
+      }' instead.";
+    };
     prependFlags = mkOption {
       type = flagsType;
       default = [ ];
@@ -39,7 +50,7 @@ in
       type = with types; attrsOf (submodule ./env-type.nix);
       default = { };
       description = "Structured configuration for environment variables.";
-      example = lib.literalExpression '' 
+      example = lib.literalExpression ''
         {
           GIT_CONFIG.value = ./gitconfig;
         }
@@ -79,6 +90,13 @@ in
           "--add-flag"
           f
         ]) config.prependFlags
+      ))
+      # Force the eval of config.flags to trigger throw
+      ++ (flatten (
+        map (f: [
+          "--add-flag"
+          f
+        ]) config.flags
       ))
       ++ (flatten (
         map (f: [
