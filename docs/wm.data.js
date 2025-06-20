@@ -1,7 +1,5 @@
 // @ts-check
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { loadOptions, stripNixStore } from "easy-nix-documentation/loader";
+import { loadOptions } from "easy-nix-documentation/loader";
 import { env, exit } from "node:process";
 
 export default {
@@ -15,7 +13,8 @@ export default {
 
     return await loadOptions(options_json, {
       mapDeclarations: (declaration) => {
-        const relDecl = stripNixStore(declaration);
+        const relDecl = declaration.replace(/.*wrapper-manager\//, "");
+        console.log(relDecl);
         return `<a href="http://github.com/viperML/wrapper-manager/tree/master/${relDecl}">&lt;wrapper-manager/${relDecl}&gt;</a>`;
       },
     });
