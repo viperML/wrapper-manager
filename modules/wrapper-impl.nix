@@ -96,7 +96,7 @@ in
 
                 cmd=()
                 if [[ -z "${target}" ]]; then
-                  cmd=(${wrapProgram} '${name}')
+                  cmd=(${wrapProgram} "$out/bin/${name}")
                 elif [[ -e "$out/bin/${name}" ]]; then
                   echo ":: Error: Target '${name}' already exists"
                   exit 1

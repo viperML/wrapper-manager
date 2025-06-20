@@ -2,6 +2,7 @@ let
   pkgs = import <nixpkgs> {
     config.allowUnfree = true;
   };
+  inherit (pkgs) lib;
   wrapper-manager = import ../.;
 in
 wrapper-manager.lib {
@@ -62,6 +63,19 @@ wrapper-manager.lib {
         basePackage = pkgs.git;
         env.FOO.value = "BAR";
         programs.scalar = { };
+      };
+
+      wrappers.fish = {
+        basePackage = pkgs.fish;
+        programs.fish = {
+          wrapFlags = [
+            "--prefix"
+            "XDG_DATA_DIRS"
+            ":"
+            (lib.makeSearchPathOutput "out" "share" [
+            ])
+          ];
+        };
       };
     }
   ];
