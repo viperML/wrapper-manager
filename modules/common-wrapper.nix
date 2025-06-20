@@ -34,9 +34,14 @@ in
       type = flagsType;
       default = [ ];
       description = "(Deprecated) Flags passed before any arguments to the wrapped program. Use prependFlags instead";
-      apply = throw "The option `${lib.showOption [ "flags" ]}' used in ${lib.showFiles options.flags.files} is deprecated. Use `${
-        lib.showOption [ "prependFlags" ]
-      }' instead.";
+      apply =
+        flags:
+        if flags == [ ] then
+          [ ]
+        else
+          throw "The option `${lib.showOption [ "flags" ]}' used in ${lib.showFiles options.flags.files} is deprecated. Use `${
+            lib.showOption [ "prependFlags" ]
+          }' instead.";
     };
     prependFlags = mkOption {
       type = flagsType;

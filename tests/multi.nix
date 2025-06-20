@@ -15,6 +15,9 @@ wrapper-manager.lib {
         basePackage = pkgs.discord;
 
         env.NIXOS_OZONE_WL.value = "1";
+        prependFlags = [
+          "--disable-gpu"
+        ];
       };
 
       wrappers.hello = {
@@ -36,13 +39,13 @@ wrapper-manager.lib {
         basePackage = pkgs.zellij;
       };
 
-      # wrappers.hello-bad = {
-      #   basePackage = pkgs.hello;
-      #   flags = [
-      #     "-g"
-      #     "g"
-      #   ];
-      # };
+      wrappers.hello-bad = {
+        basePackage = pkgs.hello;
+        flags = [
+          "-g"
+          "g"
+        ];
+      };
 
       wrappers.neofetch = {
         basePackage = pkgs.neofetch.override { x11Support = false; };
