@@ -111,7 +111,7 @@ let
   #=>           { hello = «derivation /nix/store/...»; }
 
   # Add all the wrappers to systemPackages:
-  environment.systemPackages = [ ] ++ (builtins.attrValues wm-eval-config.build.packages);
+  environment.systemPackages = [ ] ++ (builtins.attrValues wm-eval.config.build.packages);
   # or using the bundle:
   environment.systemPackages = [ wm-eval.config.build.toplevel ];
 
