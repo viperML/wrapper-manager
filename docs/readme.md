@@ -134,7 +134,7 @@ The main entrypoint is `wrapper-manager.lib`. To get it:
 
 ```nix
 {
-  inputs.wrapper-manager.url = "github.com:viperML/wrapper-manager";
+  inputs.wrapper-manager.url = "github:viperML/wrapper-manager";
 
   outputs = {self, wrapper-manager}: let
     # wrapper-manager.lib { ... }
