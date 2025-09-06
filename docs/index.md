@@ -11,6 +11,9 @@ hero:
       text: Read Me
       link: /readme
     - theme: alt
+      text: Cookbook
+      link: /cookbook
+    - theme: alt
       text: API Reference
       link: /api
 

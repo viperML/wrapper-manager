@@ -17,6 +17,7 @@ export default defineConfig({
         text: "Sections",
         items: [
           { text: "Read Me", link: "/readme" },
+          { text: "Cookbook", link: "/cookbook" },
           { text: "API", link: "/api" },
         ],
       },
