@@ -9,10 +9,19 @@ let
   options_json =
     (nixosOptionsDoc {
       options =
-        ((import ../.).lib {
-          inherit pkgs;
-          modules = [ ];
-        }).options;
+        lib.recursiveUpdate
+          ((import ../.).lib {
+            inherit pkgs;
+            modules = [ ./modular-modules.nix ];
+          }).options
+          {
+            wrappers.type = lib.types.attrsOf (
+              lib.types.submodule [
+                ../modules/wrapper.nix
+                (pkgs.extend (import ../.).overlays.default).mkWrapper.modules.wrapped
+              ]
+            );
+          };
     }).optionsJSON;
 in
 buildNpmPackage {
@@ -25,7 +34,7 @@ buildNpmPackage {
   inherit (importNpmLock) npmConfigHook;
 
   env.WRAPPER_MANAGER_OPTIONS_JSON = options_json;
-  passthru = {inherit options_json;};
+  passthru = { inherit options_json; };
 
   buildPhase = ''
     runHook preBuild

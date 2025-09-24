@@ -1,21 +1,27 @@
 let
+  overlays.default =
+    final: prev:
+    prev.lib.packagesFromDirectoryRecursive {
+      inherit (final) callPackage;
+      directory = ./pkgs;
+    };
+
   eval =
     {
       pkgs,
-      lib ? pkgs.lib,
       modules ? [ ],
       specialArgs ? { },
     }:
-    lib.evalModules {
-      modules = [
-        ./modules/many-wrappers.nix
-      ] ++ modules;
+    pkgs.lib.evalModules {
+      modules = [ ./modules ] ++ modules;
       specialArgs = {
-        inherit pkgs;
-      } // specialArgs;
+        pkgs = pkgs.extend overlays.default;
+      }
+      // specialArgs;
     };
 in
 {
+  inherit overlays;
   lib = {
     inherit eval;
     __functor = _: eval;
@@ -24,10 +30,11 @@ in
       (pkgs.lib.evalModules {
         modules = [
           ./modules/wrapper.nix
+          pkgs.mkWrapper.modules.wrapped
           module
         ];
         specialArgs = {
-          inherit pkgs;
+          pkgs = pkgs.extend overlays.default;
         };
       }).config.wrapped;
   };

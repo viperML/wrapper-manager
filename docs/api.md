@@ -14,11 +14,15 @@ import { RenderDocs } from "easy-nix-documentation";
 
 ## Main API
 
-<RenderDocs :options="data" :exclude="[/^_module\.args$/, /^build\.*/, /programs/]"  />
+<RenderDocs :options="data" :exclude="[/^_module\.args$/, /^build\.*/, /programs/, /^\<imports = \[ .* \]\>/]"  />
 
 ## Program configuration
 
 <RenderDocs :options="data" :include="[/programs/]" />
+
+## Modular modules
+
+<RenderDocs :options="data" :include="[/^\<imports = \[ .* \]\>/]" />
 
 ## Outputs
 

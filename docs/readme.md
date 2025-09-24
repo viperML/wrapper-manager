@@ -172,6 +172,11 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- 2025-09-20
+  - Full rewrite
+  - `env` has been renamed to `envVars`
+  - `flags` and `wrapFlags` has been removed
+
 - 2025-06-19
   - Full rewrite
   - `flags` has been removed in favor of `prependFlags`
