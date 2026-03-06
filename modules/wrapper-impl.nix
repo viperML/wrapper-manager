@@ -168,7 +168,7 @@ in
               ${lib.concatMapStringsSep "\n" (
                 p:
                 if p ? "man" then
-                  "${lib.getExe pkgs.xorg.lndir} -silent ${p.man} \${!outputMan}"
+                  "${lib.getExe pkgs.lndir} -silent ${p.man} \${!outputMan}"
                 else
                   "echo \"No man output for ${lib.getName p}\""
               ) ([ config.basePackage ] ++ config.extraPackages)}
