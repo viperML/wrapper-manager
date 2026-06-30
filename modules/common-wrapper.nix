@@ -52,7 +52,7 @@ in
       '';
     };
     env = mkOption {
-      type = with types; attrsOf (submodule ./env-type.nix);
+      type = with types; attrsOf (coercedTo str (value: { inherit value; }) (submodule ./env-type.nix));
       default = { };
       description = "Structured configuration for environment variables.";
       example = lib.literalExpression ''
