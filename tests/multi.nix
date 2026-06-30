@@ -61,7 +61,7 @@ wrapper-manager.lib {
 
       wrappers.git = {
         basePackage = pkgs.git;
-        env.FOO.value = "BAR";
+        env.FOO = "BAR";
         programs.scalar = { };
       };
 
