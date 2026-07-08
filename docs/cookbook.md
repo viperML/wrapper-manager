@@ -10,7 +10,7 @@ These are some examples of using wrapper-manager to configure applications.
   # Simple configuration by changing the config dir
   wrappers.kitty = {
     basePackage = pkgs.kitty;
-    env.KITTY_CONFIG_DIRECTORY.value = ./kitty-config;
+    env.KITTY_CONFIG_DIRECTORY = ./kitty-config;
   };
 
   # Configure Alacritty using Nix to write the TOML config file
@@ -46,7 +46,7 @@ These are some examples of using wrapper-manager to configure applications.
   # Wezterm configuration using its env var
   wrappers.wezterm = {
     basePackage = pkgs.wezterm;
-    env.WEZTERM_CONFIG_FILE.value = pkgs.writeText "wezterm.lua" ''
+    env.WEZTERM_CONFIG_FILE = pkgs.writeText "wezterm.lua" ''
       local wezterm = require("wezterm")
       local config = wezterm.config_builder()
 
@@ -55,6 +55,14 @@ These are some examples of using wrapper-manager to configure applications.
       return config
     '';
   };
-
+  
+  # Force an environment variable to a value, and ignored if manually set
+  wrappers.git = {
+    basePackage = pkgs.git;
+    env.GIT_CONFIG = {
+      value = ./my-gitconfig;
+      force = true;
+    };
+  };
 }
 ```

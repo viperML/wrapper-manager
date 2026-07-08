@@ -54,10 +54,12 @@ in
     env = mkOption {
       type = with types; attrsOf (coercedTo str (value: { inherit value; }) (submodule ./env-type.nix));
       default = { };
-      description = "Structured configuration for environment variables.";
+      description = "Structured configuration of environment variable. Using a string sets the .value directly.";
       example = lib.literalExpression ''
         {
+          PAGER = "less";
           GIT_CONFIG.value = ./gitconfig;
+          GIT_CONFIG.force = true;
         }
       '';
     };

@@ -19,7 +19,7 @@
 {pkgs, ...}: {
   # Build a custom nushell wrapper
   # that self-bundles its configuration and dependencies
-  # ~/.config/nushell is not neeeded!
+  # ~/.config/nushell is not needed!
   wrappers.nushell = {
     basePackage = pkgs.nushell;
     prependFlags = [
@@ -28,7 +28,7 @@
       "--config"
       ./config.nu
     ];
-    env.STARSHIP_CONFIG.value = ../starship.toml;
+    env.STARSHIP_CONFIG = ../starship.toml;
     pathAdd = [
       pkgs.starship
       pkgs.carapace
@@ -119,7 +119,7 @@ let
   # Wrap a singular package
   myGit = wrapper-manager.lib.wrapWith pkgs {
     basePackage = pkgs.git;
-    env.GIT_CONFIG.value = ./gitconfig;
+    env.GIT_CONFIG = ./gitconfig;
   };
   #=> «derivation /nix/store/...»
 in
