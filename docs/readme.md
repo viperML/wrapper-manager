@@ -172,6 +172,9 @@ https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 
+- 2026-07-08
+  - `env` now accepts strings instead of attribute sets, coerced automatically to the corresponding `.value`
+
 - 2025-06-19
   - Full rewrite
   - `flags` has been removed in favor of `prependFlags`
