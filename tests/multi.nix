@@ -48,12 +48,12 @@ wrapper-manager.lib {
         ];
       };
 
-      wrappers.neofetch = {
-        basePackage = pkgs.neofetch.override { x11Support = false; };
+      wrappers.fastfetch = {
+        basePackage = pkgs.fastfetch;
         programs.guixfetch = {
-          target = "neofetch";
+          target = "fastfetch";
           prependFlags = [
-            "--ascii_distro"
+            "--logo"
             "guix"
           ];
         };
