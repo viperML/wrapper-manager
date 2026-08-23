@@ -1,24 +1,23 @@
-let
-  eval =
-    {
-      pkgs,
-      lib ? pkgs.lib,
-      modules ? [ ],
-      specialArgs ? { },
-    }:
-    lib.evalModules {
-      modules = [
-        ./modules/many-wrappers.nix
-      ] ++ modules;
-      specialArgs = {
-        inherit pkgs;
-      } // specialArgs;
-    };
-in
 {
   lib = {
-    inherit eval;
-    __functor = _: eval;
+    __functor = self: self.eval;
+    eval =
+      {
+        pkgs,
+        lib ? pkgs.lib,
+        modules ? [ ],
+        specialArgs ? { },
+      }:
+      lib.evalModules {
+        modules = [
+          ./modules/many-wrappers.nix
+        ]
+        ++ modules;
+        specialArgs = {
+          inherit pkgs;
+        }
+        // specialArgs;
+      };
     wrapWith =
       pkgs: module:
       (pkgs.lib.evalModules {
