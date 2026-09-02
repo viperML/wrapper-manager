@@ -15,7 +15,7 @@ export default {
       mapDeclarations: (declaration) => {
         const relDecl = declaration.replace(/.*wrapper-manager\//, "");
         console.log(relDecl);
-        return `<a href="http://github.com/viperML/wrapper-manager/tree/master/${relDecl}">&lt;wrapper-manager/${relDecl}&gt;</a>`;
+        return `<a href="https://codeberg.org/viperML/wrapper-manager/src/branch/master/${relDecl}">&lt;wrapper-manager/${relDecl}&gt;</a>`;
       },
     });
   },

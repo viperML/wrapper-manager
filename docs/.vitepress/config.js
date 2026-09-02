@@ -24,7 +24,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/viperML/wrapper-manager" },
+      { icon: "codeberg", link: "https://codeberg.org/viperML/wrapper-manager" },
     ],
 
     outline: "deep",

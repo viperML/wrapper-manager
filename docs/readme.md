@@ -76,7 +76,7 @@ around some of their shortcomings.
 
 ## **Documentation**
 
-https://viperml.github.io/wrapper-manager
+https://viperml.codeberg.page/wrapper-manager
 
 
 ## **Installation and usage**
@@ -134,7 +134,7 @@ The main entrypoint is `wrapper-manager.lib`. To get it:
 
 ```nix
 {
-  inputs.wrapper-manager.url = "github:viperML/wrapper-manager";
+  inputs.wrapper-manager.url = "git+https://codeberg.org/viperML/wrapper-manager";
 
   outputs = {self, wrapper-manager}: let
     # wrapper-manager.lib { ... }
@@ -145,7 +145,7 @@ The main entrypoint is `wrapper-manager.lib`. To get it:
 ### Npins
 
 ```
-$ npins add github viperML wrapper-manager
+$ npins add forgejo codeberg.org viperML wrapper-manager --branch master
 ```
 
 ```nix
@@ -163,12 +163,8 @@ in
 
 These are some examples of wrapper-manager used in the wild. Feel free to PR yours.
 
-- https://github.com/viperML/dotfiles/tree/master/modules/wrapper-manager
+- https://codeberg.org/viperML/dotfiles/src/branch/master/modules/wrapper-manager
 
-
-## To-do's
-
-https://github.com/viperML/wrapper-manager/issues
 
 ## Changelog
 

@@ -1,0 +1,32 @@
+name: Publish Documentation
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  NIX_CONFIG: extra-experimental-features = nix-command
+
+jobs:
+  main:
+    runs-on: codeberg-small
+    container:
+      image: docker.io/nixos/nix:latest
+
+    steps:
+      - run: nix profile add -f '<nixpkgs>' nodejs rsync
+        name: Prepare image
+
+      - uses: actions/checkout@v7
+
+      - run: |
+          nix build -f ./docs -L
+          rsync -aL ./result/ ./public/
+
+      - uses: actions/git-pages@v2
+        with:
+          site: https://${{ forgejo.event.repository.owner.username }}.codeberg.page/${{ forgejo.event.repository.name }}/
+          token: ${{ forgejo.token }}
+          source: public/
