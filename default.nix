@@ -14,8 +14,11 @@ let
         inherit pkgs;
       } // specialArgs;
     };
+
+  doWarn = false;
+  maybeWarn = x: if doWarn then builtins.warn (import ./migration.nix) x else x;
 in
-{
+maybeWarn {
   lib = {
     inherit eval;
     __functor = _: eval;
